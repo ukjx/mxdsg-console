@@ -1,89 +1,52 @@
 <template>
-<!--  <Button>Button</Button>-->
-
-
-<!--  <Button variant="secondary">-->
-<!--    Secondary-->
-<!--  </Button>-->
-
-
-<!--  <div class="flex items-center space-x-2">-->
-<!--    <Switch id="airplane-mode" />-->
-<!--    <Label for="airplane-mode">Airplane Mode</Label>-->
-<!--  </div>-->
-
-<!--  <Card :class="cn('w-[380px]', $attrs.class ?? '')">-->
-  <Card class="w-full">
+  <Card class="w-auto border-none rounded-none">
     <CardHeader>
-      <CardTitle>Notifications</CardTitle>
-      <CardDescription>You have 3 unread messages.</CardDescription>
+      <CardTitle>机器远控</CardTitle>
+      <CardDescription>当前:黑棋夏天4, 频道:4, 运行时长：5小时20分</CardDescription>
     </CardHeader>
     <CardContent class="grid gap-4">
-      <div class=" flex items-center space-x-4 rounded-md border p-4">
-        <BellRing />
-        <div class="flex-1 space-y-1">
-          <p class="text-sm font-medium leading-none">
-            Push Notifications
-          </p>
-          <p class="text-sm text-muted-foreground">
-            Send notifications to device.
-          </p>
-        </div>
-        <Switch />
-      </div>
-      <div>
-        <div
-            v-for="(notification, index) in notifications" :key="index"
-            class="mb-4 grid grid-cols-[25px_minmax(0,1fr)] items-start pb-4 last:mb-0 last:pb-0"
-        >
-          <span class="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-          <div class="space-y-1">
-            <p class="text-sm font-medium leading-none">
-              {{ notification.title }}
-            </p>
-            <p class="text-sm text-muted-foreground">
-              {{ notification.description }}
-            </p>
-          </div>
-        </div>
-      </div>
+
+      <Tabs default-value="setting" class="w-auto">
+        <TabsList class="grid w-full grid-cols-4">
+          <TabsTrigger value="setting">配置</TabsTrigger>
+          <TabsTrigger value="script">脚本</TabsTrigger>
+          <TabsTrigger value="monitor">监控</TabsTrigger>
+          <TabsTrigger value="logger">日志</TabsTrigger>
+        </TabsList>
+        <TabsContent value="setting">
+          <Setting></Setting>
+        </TabsContent>
+        <TabsContent value="script">
+          <Script></Script>
+        </TabsContent>
+        <TabsContent value="monitor">
+          <Monitor></Monitor>
+        </TabsContent>
+        <TabsContent value="logger">
+          <Logger></Logger>
+        </TabsContent>
+      </Tabs>
+
     </CardContent>
-    <CardFooter>
+    <CardFooter v-show="false">
       <Button class="w-full">
-        <Check class="mr-2 h-4 w-4" /> Mark all as read
+        <Check class="mr-2 h-4 w-4"/>
+        重启机器
       </Button>
     </CardFooter>
   </Card>
 </template>
 
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
-// import { cn } from '@/lib/utils'
-import { BellRing, Check } from 'lucide-vue-next'
-
-const notifications = [
-  {
-    title: 'Your call has been confirmed.',
-    description: '1 hour ago',
-  },
-  {
-    title: 'You have a new message!',
-    description: '1 hour ago',
-  },
-  {
-    title: 'Your subscription is expiring soon!',
-    description: '2 hours ago',
-  },
-]
+import Setting from '@/components/setting.vue'
+import Script from '@/components/script.vue'
+import Monitor from '@/components/monitor.vue'
+import Logger from '@/components/logger.vue'
+// import { Label } from '@/components/ui/label'
+import {Button} from '@/components/ui/button'
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from '@/components/ui/card'
+import {Check} from 'lucide-vue-next'
+import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 </script>
 
 <style>
