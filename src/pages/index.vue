@@ -14,7 +14,7 @@
           <TabsTrigger value="logger">日志</TabsTrigger>
         </TabsList>
         <TabsContent value="setting">
-          <Setting></Setting>
+          <Setting :configs="configs" @setConfigs="setConfigs"></Setting>
         </TabsContent>
         <TabsContent value="script">
           <Script></Script>
@@ -42,11 +42,53 @@ import Setting from '@/components/setting.vue'
 import Script from '@/components/script.vue'
 import Monitor from '@/components/monitor.vue'
 import Logger from '@/components/logger.vue'
-// import { Label } from '@/components/ui/label'
 import {Button} from '@/components/ui/button'
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from '@/components/ui/card'
 import {Check} from 'lucide-vue-next'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
+import {onMounted, reactive} from "vue"
+import {Configs} from '@/types/configs'
+
+let ws: WebSocket
+
+const initSocket = function () {
+  ws = new WebSocket('ws://192.168.44.4:12581')
+  ws.onopen = function () {
+    console.log('WebSocket已连接')
+    ws.send(JSON.stringify({action: 'getConfigs'}))
+  }
+  ws.onmessage = function (event) {
+    // console.log('收到消息：' + event.data)
+    const msg = JSON.parse(event.data)
+    console.log(msg.data)
+    switch (msg.action) {
+      case 'setConfigs':
+        configs = msg.data
+        break
+    }
+  }
+  ws.onclose = function () {
+    console.log('WebSocket已关闭')
+  }
+}
+
+let configs: Configs = reactive({
+  checkHpMp: false,
+  weChatNotice: false,
+  ignoreSmallBlack: false,
+  smallBlackHandle: 'ignore',
+  changeLineInterval: 60,
+  someoneSecond: 30,
+  runeHandle: 'unlock'
+})
+
+const setConfigs = function (configs: Configs) {
+  ws.send(JSON.stringify({action: 'setConfigs', data: configs}))
+}
+
+onMounted(() => {
+  initSocket()
+})
 </script>
 
 <style>
