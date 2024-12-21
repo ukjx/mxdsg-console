@@ -4,17 +4,21 @@
       <CardTitle>机器远控</CardTitle>
       <CardDescription>当前:黑棋夏天4, 频道:4, 运行时长：5小时20分</CardDescription>
     </CardHeader>
-    <CardContent class="grid gap-4">
+    <CardContent class="grid gap-5">
 
       <Tabs default-value="setting" class="w-auto">
-        <TabsList class="grid w-full grid-cols-4">
+        <TabsList class="grid w-full grid-cols-5">
           <TabsTrigger value="setting">配置</TabsTrigger>
+          <TabsTrigger value="role">角色</TabsTrigger>
           <TabsTrigger value="script">脚本</TabsTrigger>
           <TabsTrigger value="monitor">监控</TabsTrigger>
           <TabsTrigger value="logger">日志</TabsTrigger>
         </TabsList>
         <TabsContent value="setting">
           <Setting :configs="configs" @setConfigs="setConfigs"></Setting>
+        </TabsContent>
+        <TabsContent value="Role">
+          <Role></Role>
         </TabsContent>
         <TabsContent value="script">
           <Script></Script>
@@ -42,6 +46,7 @@ import Setting from '@/components/setting.vue'
 import Script from '@/components/script.vue'
 import Monitor from '@/components/monitor.vue'
 import Logger from '@/components/logger.vue'
+import Role from '@/components/role.vue'
 import {Button} from '@/components/ui/button'
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from '@/components/ui/card'
 import {Check} from 'lucide-vue-next'
