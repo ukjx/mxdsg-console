@@ -1,34 +1,79 @@
 <template>
+    <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+      <BatteryLow/>
+      <div class="flex-1 space-y-1">
+        <p class="text-sm font-medium leading-none">
+          血量魔量检测
+        </p>
+      </div>
+      <Switch v-model:checked="configs.checkHpMp" @update:checked="changeConfigValue('checkHpMp', !configs.checkHpMp)"/>
+    </div>
+
   <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
-    <BellRing/>
+    <Target/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
-        微信通知
-      </p>
-      <p class="text-sm text-muted-foreground">
-        适用于蘑菇、测谎、掉线
+        蘑菇处理
       </p>
     </div>
-    <Switch :checked="configs.weChatNotice" @update:checked="changeConfigValue('weChatNotice', !configs.weChatNotice)"/>
+    <Select :modelValue="configs.mushroomHandle">
+      <SelectTrigger class="flex-1">
+        <SelectValue placeholder="Select a fruit"/>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="none">
+            忽略
+          </SelectItem>
+          <SelectItem value="avoid">
+            躲避
+          </SelectItem>
+          <SelectItem value="change">
+            换线
+          </SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   </div>
 
   <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
     <Shuffle/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
-        小黑处理
+        掉线处理
       </p>
     </div>
-    <!--    <Switch :checked="configs.ignoreSmallBlack"-->
-    <!--            @update:checked="changeConfigValue('ignoreSmallBlack', !configs.ignoreSmallBlack)"/>-->
-
-    <Select :defaultValue="configs.smallBlackHandle">
+    <Select :modelValue="configs.offlineHandle">
       <SelectTrigger class="flex-1">
         <SelectValue placeholder="Select a fruit"/>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="ignore">
+          <SelectItem value="none">
+            忽略
+          </SelectItem>
+          <SelectItem value="disable">
+            停用并通知
+          </SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+    <TrainFront/>
+    <div class="flex-1 space-y-1">
+      <p class="text-sm font-medium leading-none">
+        小黑处理
+      </p>
+    </div>
+    <Select :modelValue="configs.smallBlackHandle">
+      <SelectTrigger class="flex-1">
+        <SelectValue placeholder="Select a fruit"/>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="none">
             忽略
           </SelectItem>
           <SelectItem value="change">
@@ -46,11 +91,9 @@
         符文处理
       </p>
     </div>
-    <!--    <Switch :checked="true"/>-->
-
     <Select :defaultValue="configs.runeHandle">
       <SelectTrigger class="flex-1">
-        <SelectValue placeholder="Select a fruit"/>
+        <SelectValue placeholder="未选择"/>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
@@ -59,6 +102,33 @@
           </SelectItem>
           <SelectItem value="notice">
             通知
+          </SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+    <LockKeyholeOpen/>
+    <div class="flex-1 space-y-1">
+      <p class="text-sm font-medium leading-none">
+        死亡处理
+      </p>
+      <p class="text-sm text-muted-foreground">
+        需要配置引路
+      </p>
+    </div>
+    <Select :defaultValue="configs.deathHandle">
+      <SelectTrigger class="flex-1">
+        <SelectValue placeholder="未选择"/>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="home">
+            回城
+          </SelectItem>
+          <SelectItem value="back">
+            回到原图
           </SelectItem>
         </SelectGroup>
       </SelectContent>
@@ -75,7 +145,7 @@
         分钟 0为不换
       </p>
     </div>
-    <NumberField class="flex-1" id="minute" :default-value="60" :min="0">
+    <NumberField class="flex-1" id="minute" :modelValue="configs.changeLineInterval" :min="0">
       <NumberFieldContent>
         <NumberFieldDecrement/>
         <NumberFieldInput/>
@@ -94,7 +164,7 @@
         秒数 1秒换 0不换
       </p>
     </div>
-    <NumberField class="flex-1" id="second" :default-value="1" :min="0">
+    <NumberField class="flex-1" id="second" :modelValue="configs.someoneSecond" :min="0">
       <NumberFieldContent>
         <NumberFieldDecrement/>
         <NumberFieldInput/>
@@ -105,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-import {BellRing, Clock1, LockKeyholeOpen, PersonStanding, Shuffle} from "lucide-vue-next"
+import {BatteryLow, Target, TrainFront, Clock1, LockKeyholeOpen, PersonStanding, Shuffle} from "lucide-vue-next"
 import {
   NumberField,
   NumberFieldContent,

@@ -61,7 +61,7 @@
       删除脚本
     </Button>
   </div>
-  <Button :disabled="true" class="w-full mb-1 bg-sky-500">
+  <Button class="w-full mb-1 bg-sky-500">
     <MonitorCheck class="mr-2 h-4 w-4"/>
     运行脚本
   </Button>

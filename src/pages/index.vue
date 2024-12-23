@@ -53,22 +53,36 @@ import {Check} from 'lucide-vue-next'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {onMounted, reactive} from "vue"
 import {Configs} from '@/types/configs'
+import {v4 as uuidv4} from 'uuid'
+import {useRoute} from "vue-router";
 
 let ws: WebSocket
+let webSocketUrl: string = ''
+let from: string = uuidv4()
+let to: string = ''
 
 const initSocket = function () {
-  ws = new WebSocket('ws://192.168.44.4:12581')
+  ws = new WebSocket(webSocketUrl + from)
   ws.onopen = function () {
     console.log('WebSocket已连接')
-    ws.send(JSON.stringify({action: 'getConfigs'}))
+    ws.send(JSON.stringify({from: from, to: to, action: 'getConfigs'}))
   }
   ws.onmessage = function (event) {
     // console.log('收到消息：' + event.data)
     const msg = JSON.parse(event.data)
-    console.log(msg.data)
+    console.log(msg)
     switch (msg.action) {
-      case 'setConfigs':
-        configs = msg.data
+      case 'loadConfigs':
+        const item = msg.data;
+        configs.checkHpMp = Boolean(item.checkHpMp)
+        configs.mushroomHandle = item.mushroomHandle
+        configs.offlineHandle = item.offlineHandle
+        configs.smallBlackHandle = item.smallBlackHandle
+        configs.runeHandle = item.runeHandle
+        configs.deathHandle = item.deathHandle
+        configs.changeLineInterval = parseInt(item.changeLineInterval)
+        configs.someoneSecond = parseInt(item.someoneSecond)
+        configs.taskName = item.taskName
         break
     }
   }
@@ -78,21 +92,31 @@ const initSocket = function () {
 }
 
 let configs: Configs = reactive({
-  checkHpMp: false,
-  weChatNotice: false,
-  ignoreSmallBlack: false,
-  smallBlackHandle: 'ignore',
+  checkHpMp: true,
+  mushroomHandle: 'avoid',
+  offlineHandle: 'disable',
+  smallBlackHandle: 'none',
+  runeHandle: 'unlock',
+  deathHandle: 'back',
   changeLineInterval: 60,
-  someoneSecond: 30,
-  runeHandle: 'unlock'
+  someoneSecond: 20,
+  taskName: 'execute'
 })
 
 const setConfigs = function (configs: Configs) {
-  ws.send(JSON.stringify({action: 'setConfigs', data: configs}))
+  ws.send(JSON.stringify({from: from, to: to, action: 'setConfigs', data: configs}))
 }
 
 onMounted(() => {
-  initSocket()
+  const route = useRoute()
+  if (!route.query.param) return;
+  let base64EncodedString = route.query.param.toString();
+  const decodedString = atob(base64EncodedString);
+  const param = JSON.parse(decodedString);
+
+  webSocketUrl = param['webSocketUrl'];
+  to = param['uniqueId'];
+  initSocket();
 })
 </script>
 
