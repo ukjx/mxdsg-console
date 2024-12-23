@@ -15,7 +15,7 @@
           <TabsTrigger value="logger">日志</TabsTrigger>
         </TabsList>
         <TabsContent value="setting">
-          <Setting :configs="configs" @setConfigs="setConfigs"></Setting>
+          <Setting :configs="configs" @setConfig="setConfig"></Setting>
         </TabsContent>
         <TabsContent value="Role">
           <Role></Role>
@@ -103,8 +103,8 @@ let configs: Configs = reactive({
   taskName: 'execute'
 })
 
-const setConfigs = function (configs: Configs) {
-  ws.send(JSON.stringify({from: from, to: to, action: 'setConfigs', data: configs}))
+const setConfig = function (key: string, value: string) {
+  ws.send(JSON.stringify({from: from, to: to, action: 'setConfig', data: {key: key, value: value}}))
 }
 
 onMounted(() => {

@@ -52,9 +52,13 @@
     </Popover>
   </div>
   <div class="grid grid-cols-2 mb-1">
-    <Button class="mr-1 bg-lime-500">
+    <Button v-if="!isRecord" @click="isRecord=true" class="mr-1 bg-lime-500">
       <Videotape class="mr-2 h-4 w-4"/>
-      录制脚本
+      开始录制
+    </Button>
+    <Button v-if="isRecord" @click="isRecord=false" class="mr-1 bg-emerald-600">
+      <Videotape class="mr-2 h-4 w-4"/>
+      停止录制
     </Button>
     <Button class="ml-1 bg-red-600">
       <Trash2 class="mr-2 h-4 w-4"/>
@@ -91,8 +95,9 @@ const frameworks = [
 
 const open = ref(false)
 const value = ref('')
+
+const isRecord = ref(false)
 </script>
 
 <style scoped>
-
 </style>

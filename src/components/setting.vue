@@ -193,15 +193,16 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {Switch} from "@/components/ui/switch"
-import {onMounted, defineProps} from "vue"
+import {onMounted} from "vue"
 import {Configs} from '@/types/configs'
 
 function changeConfigValue<T extends keyof Configs>(configKey: T, value: Configs[T]) {
-  props.configs[configKey] = value;
-  emit('setConfigs', props.configs);
+  // props.configs[configKey] = value;
+  emit('setConfig', configKey, value);
 }
 
-const props = defineProps<{ configs: Configs }>()
+defineProps<{ configs: Configs }>()
+// const props = defineProps<{ configs: Configs }>()
 
 // defineProps({
 //   configs: Config
@@ -211,7 +212,7 @@ onMounted(() => {
   // config.loadData()
 })
 
-const emit = defineEmits(['setConfigs'])
+const emit = defineEmits(['setConfig'])
 </script>
 <style scoped>
 
