@@ -15,13 +15,13 @@
           <TabsTrigger value="logger">日志</TabsTrigger>
         </TabsList>
         <TabsContent value="setting">
-          <Setting :configs="configs" @setConfig="setConfig"></Setting>
+          <Setting :configs="configs" :scripts="scripts" @setConfig="setConfig"></Setting>
         </TabsContent>
         <TabsContent value="Role">
           <Role></Role>
         </TabsContent>
         <TabsContent value="script">
-          <Script></Script>
+          <Script :scripts="scripts"></Script>
         </TabsContent>
         <TabsContent value="monitor">
           <Monitor></Monitor>
@@ -51,7 +51,7 @@ import {Button} from '@/components/ui/button'
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from '@/components/ui/card'
 import {Check} from 'lucide-vue-next'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
-import {onMounted, reactive} from "vue"
+import {onMounted, reactive, ref} from "vue"
 import {Configs} from '@/types/configs'
 import {v4 as uuidv4} from 'uuid'
 import {useRoute} from "vue-router";
@@ -84,6 +84,9 @@ const initSocket = function () {
         configs.someoneSecond = parseInt(item.someoneSecond)
         configs.taskName = item.taskName
         break
+      case 'loadScripts':
+        scripts.value = msg.data;
+        break
     }
   }
   ws.onclose = function () {
@@ -92,16 +95,20 @@ const initSocket = function () {
 }
 
 let configs: Configs = reactive({
-  checkHpMp: true,
-  mushroomHandle: 'avoid',
-  offlineHandle: 'disable',
-  smallBlackHandle: 'none',
-  runeHandle: 'unlock',
-  deathHandle: 'back',
-  changeLineInterval: 60,
-  someoneSecond: 20,
-  taskName: 'execute'
+  checkHpMp: false,
+  mushroomHandle: '',
+  offlineHandle: '',
+  smallBlackHandle: '',
+  runeHandle: '',
+  deathHandle: '',
+  changeLineInterval: 0,
+  someoneSecond: 0,
+  taskName: '',
+  scriptName: '',
+  roleName: ''
 })
+
+let scripts = ref<string[]>([]);
 
 const setConfig = function (key: string, value: string) {
   ws.send(JSON.stringify({from: from, to: to, action: 'setConfig', data: {key: key, value: value}}))
@@ -109,14 +116,15 @@ const setConfig = function (key: string, value: string) {
 
 onMounted(() => {
   const route = useRoute()
-  if (!route.query.param) return;
-  let base64EncodedString = route.query.param.toString();
-  const decodedString = atob(base64EncodedString);
-  const param = JSON.parse(decodedString);
+  if (!route.query.param) return
+  let base64EncodedString = route.query.param.toString()
+  const decodedString = atob(base64EncodedString)
+  const param = JSON.parse(decodedString)
 
-  webSocketUrl = param['webSocketUrl'];
-  to = param['uniqueId'];
-  initSocket();
+  webSocketUrl = param['webSocketUrl']
+  to = param['uniqueId']
+  initSocket()
+  scripts.value = ['黑骑夏天3.txt', '幻影蘑菇3.txt']
 })
 </script>
 

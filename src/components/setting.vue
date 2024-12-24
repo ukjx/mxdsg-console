@@ -16,9 +16,9 @@
         蘑菇处理
       </p>
     </div>
-    <Select :modelValue="configs.mushroomHandle">
+    <Select :model-value="configs.mushroomHandle">
       <SelectTrigger class="flex-1">
-        <SelectValue placeholder="Select a fruit"/>
+        <SelectValue placeholder="未选择"/>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
@@ -45,7 +45,7 @@
     </div>
     <Select :modelValue="configs.offlineHandle">
       <SelectTrigger class="flex-1">
-        <SelectValue placeholder="Select a fruit"/>
+        <SelectValue placeholder="未选择"/>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
@@ -69,7 +69,7 @@
     </div>
     <Select :modelValue="configs.smallBlackHandle">
       <SelectTrigger class="flex-1">
-        <SelectValue placeholder="Select a fruit"/>
+        <SelectValue placeholder="未选择"/>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
@@ -91,7 +91,7 @@
         符文处理
       </p>
     </div>
-    <Select :defaultValue="configs.runeHandle">
+    <Select :modelValue="configs.runeHandle">
       <SelectTrigger class="flex-1">
         <SelectValue placeholder="未选择"/>
       </SelectTrigger>
@@ -109,7 +109,7 @@
   </div>
 
   <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
-    <LockKeyholeOpen/>
+    <Skull/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
         死亡处理
@@ -118,7 +118,7 @@
         需要配置引路
       </p>
     </div>
-    <Select :defaultValue="configs.deathHandle">
+    <Select :modelValue="configs.deathHandle">
       <SelectTrigger class="flex-1">
         <SelectValue placeholder="未选择"/>
       </SelectTrigger>
@@ -175,23 +175,9 @@
 </template>
 
 <script setup lang="ts">
-import {BatteryLow, Target, TrainFront, Clock1, LockKeyholeOpen, PersonStanding, Shuffle} from "lucide-vue-next"
-import {
-  NumberField,
-  NumberFieldContent,
-  NumberFieldDecrement,
-  NumberFieldIncrement,
-  NumberFieldInput
-} from "@/components/ui/number-field"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  // SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import {BatteryLow, Target, TrainFront, Clock1, LockKeyholeOpen, Skull, PersonStanding, Shuffle} from "lucide-vue-next"
+import {NumberField, NumberFieldContent, NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput} from "@/components/ui/number-field"
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Switch} from "@/components/ui/switch"
 import {onMounted} from "vue"
 import {Configs} from '@/types/configs'
@@ -201,7 +187,7 @@ function changeConfigValue<T extends keyof Configs>(configKey: T, value: Configs
   emit('setConfig', configKey, value);
 }
 
-defineProps<{ configs: Configs }>()
+defineProps<{ configs: Configs, scripts: string[] }>()
 // const props = defineProps<{ configs: Configs }>()
 
 // defineProps({

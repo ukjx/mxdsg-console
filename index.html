@@ -13,8 +13,14 @@
     <link rel="icon" href="/vite.png">
     <title>机器控制</title>
     <style>
+        html {
+            scrollbar-width: none;
+        }
         body {
             background-color: #111729 !important;
+        }
+        *:not(input, textarea) {
+            user-select: none;
         }
         main {
             background-color: #efeff4;
@@ -30,6 +36,17 @@
 <body>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
+    <script>
+      // 禁止右键
+      document.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+      }, false);
+
+      // 禁止拖动整个页面
+      document.body.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+      }, { passive: false });
+    </script>
 </body>
 
 </html>

@@ -8,4 +8,6 @@ export interface Configs {
     changeLineInterval: number
     someoneSecond: number
     taskName: string
+    scriptName: string
+    roleName: string
 }
