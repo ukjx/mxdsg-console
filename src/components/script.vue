@@ -102,9 +102,9 @@ import {computed, onMounted, ref} from 'vue'
 import {Status} from "@/types/status.ts";
 import { defineComponent } from 'vue';
 
-// 将组件名称更改为 Script
+// 将组件名称更改为 ScriptComponent
 defineComponent({
-  name: 'Script'
+  name: 'ScriptComponent'
 });
 
 
