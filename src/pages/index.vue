@@ -2,7 +2,12 @@
   <Card class="w-auto border-none rounded-none">
     <CardHeader>
       <CardTitle>机器远控</CardTitle>
-      <CardDescription>当前:黑棋夏天4, 频道:4, 运行时长：5小时20分</CardDescription>
+      <CardDescription class="grid grid-cols-2">
+        <span>当前: {{currentName}}</span>
+        <span>状态: {{runStatus}}</span>
+        <span>运行: {{runTime}}</span>
+        <span>频道: 4</span>
+      </CardDescription>
     </CardHeader>
     <CardContent class="grid gap-5">
 
@@ -21,7 +26,8 @@
           <Role></Role>
         </TabsContent>
         <TabsContent value="script">
-          <Script :scripts="scripts"></Script>
+          <Script :scripts="scripts" :currentScript="configs.scriptName" :currentStatus="status" @sendMessage="sendMessage"
+                  @update:currentScript="configs.scriptName=$event" @toast="showToast"></Script>
         </TabsContent>
         <TabsContent value="monitor">
           <Monitor></Monitor>
@@ -39,6 +45,8 @@
       </Button>
     </CardFooter>
   </Card>
+
+  <Toaster/>
 </template>
 
 <script setup lang="ts">
@@ -51,10 +59,16 @@ import {Button} from '@/components/ui/button'
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from '@/components/ui/card'
 import {Check} from 'lucide-vue-next'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
-import {onMounted, reactive, ref} from "vue"
+import {computed, onMounted, reactive, ref} from "vue"
 import {Configs} from '@/types/configs'
+import {Status} from "@/types/status.js";
 import {v4 as uuidv4} from 'uuid'
 import {useRoute} from "vue-router";
+import {Toaster} from '@/components/ui/toast'
+import {useToast} from '@/components/ui/toast/use-toast'
+import {getTimeDifference} from "@/lib/utils.js";
+
+const {toast} = useToast()
 
 let ws: WebSocket
 let webSocketUrl: string = ''
@@ -66,6 +80,8 @@ const initSocket = function () {
   ws.onopen = function () {
     console.log('WebSocket已连接')
     ws.send(JSON.stringify({from: from, to: to, action: 'getConfigs'}))
+    ws.send(JSON.stringify({from: from, to: to, action: 'getScripts'}))
+    ws.send(JSON.stringify({from: from, to: to, action: 'getStatus'}))
   }
   ws.onmessage = function (event) {
     // console.log('收到消息：' + event.data)
@@ -73,7 +89,7 @@ const initSocket = function () {
     console.log(msg)
     switch (msg.action) {
       case 'loadConfigs':
-        const item = msg.data;
+        let item = msg.data;
         configs.checkHpMp = Boolean(item.checkHpMp)
         configs.mushroomHandle = item.mushroomHandle
         configs.offlineHandle = item.offlineHandle
@@ -83,10 +99,21 @@ const initSocket = function () {
         configs.changeLineInterval = parseInt(item.changeLineInterval)
         configs.someoneSecond = parseInt(item.someoneSecond)
         configs.taskName = item.taskName
+        configs.scriptName = item.scriptName
+        configs.roleName = item.roleName
         break
       case 'loadScripts':
         scripts.value = msg.data;
         break
+      case 'loadStatus':
+        status.isRun = Boolean(msg.data.isRun)
+        status.isRecord = Boolean(msg.data.isRecord)
+        status.runTime = msg.data.runTime
+        intervalRunTime();
+        break;
+      case 'toast':
+        toast({ title: '提示', description: msg.data, duration: 1000 })
+        break;
     }
   }
   ws.onclose = function () {
@@ -109,9 +136,49 @@ let configs: Configs = reactive({
 })
 
 let scripts = ref<string[]>([]);
+let status: Status = reactive({
+  isRun: false,
+  isRecord: false,
+  runTime: null
+});
 
 const setConfig = function (key: string, value: string) {
-  ws.send(JSON.stringify({from: from, to: to, action: 'setConfig', data: {key: key, value: value}}))
+  console.log('setConfig:', key, value)
+  // sendMessage('setConfig', `${key}=${value}`)
+}
+const sendMessage = function (action: string, data: any) {
+  ws.send(JSON.stringify({from: from, to: to, action: action, data: data}))
+}
+const showToast = (msg: string) => {
+  toast({
+    title: '提示',
+    description: msg,
+    duration: 1000
+  })
+}
+
+const currentName = computed(() => {
+  if (configs.taskName === 'Execute' || configs.taskName === 'execute')
+    return configs.scriptName.replace(/\.txt$/, '')
+  else
+    return configs.taskName
+})
+const runStatus = computed(() => {
+  return status.isRun?'运行中':'未运行'
+})
+
+let runTime = ref('');
+const intervalRunTime = () => {
+  if (!runTime.value && status.runTime) {
+      let time = getTimeDifference(new Date(status.runTime), new Date())
+      runTime.value = time;
+  }
+  setInterval(() => {
+    if (status.runTime) {
+      let time = getTimeDifference(new Date(status.runTime), new Date())
+      runTime.value = time;
+    }
+  }, 1000)
 }
 
 onMounted(() => {
@@ -124,7 +191,6 @@ onMounted(() => {
   webSocketUrl = param['webSocketUrl']
   to = param['uniqueId']
   initSocket()
-  scripts.value = ['黑骑夏天3.txt', '幻影蘑菇3.txt']
 })
 </script>
 
