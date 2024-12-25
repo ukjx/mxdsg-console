@@ -26,8 +26,8 @@
           <Role></Role>
         </TabsContent>
         <TabsContent value="script">
-          <ScriptComponent :scripts="scripts" :currentScript="configs.scriptName" :currentStatus="status" @sendMessage="sendMessage"
-                  @update:currentScript="configs.scriptName=$event" @toast="showToast"></ScriptComponent>
+          <Script :scripts="scripts" :currentScript="configs.scriptName" :currentStatus="status" @sendMessage="sendMessage"
+                  @update:currentScript="configs.scriptName=$event" @toast="showToast"></Script>
         </TabsContent>
         <TabsContent value="monitor">
           <Monitor></Monitor>
@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import Setting from '@/components/setting.vue'
-import ScriptComponent from '@/components/script.vue'
+import Script from '@/components/script.vue'
 import Monitor from '@/components/monitor.vue'
 import Logger from '@/components/logger.vue'
 import Role from '@/components/role.vue'

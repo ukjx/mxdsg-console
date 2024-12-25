@@ -100,12 +100,12 @@ import {AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogCanc
 import {Input} from '@/components/ui/input'
 import {computed, onMounted, ref} from 'vue'
 import {Status} from "@/types/status.ts";
-import { defineComponent } from 'vue';
+// import { defineComponent } from 'vue';
 
 // 将组件名称更改为 ScriptComponent
-defineComponent({
-  name: 'ScriptComponent'
-});
+// defineComponent({
+//   name: 'ScriptComponent'
+// });
 
 
 const open = ref(false)
