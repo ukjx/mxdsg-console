@@ -26,8 +26,8 @@
           <Role></Role>
         </TabsContent>
         <TabsContent value="script">
-          <Script :scripts="scripts" :currentScript="configs.scriptName" :currentStatus="status" @sendMessage="sendMessage"
-                  @update:currentScript="configs.scriptName=$event" @toast="showToast"></Script>
+          <Scripting :scripts="scripts" :currentScript="configs.scriptName" :currentStatus="status" @sendMessage="sendMessage"
+                  @update:currentScript="configs.scriptName=$event" @toast="showToast"></Scripting>
         </TabsContent>
         <TabsContent value="monitor">
           <Monitor></Monitor>
@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import Setting from '@/components/setting.vue'
-import Script from '@/components/script.vue'
+import Scripting from '@/components/scripting.vue'
 import Monitor from '@/components/monitor.vue'
 import Logger from '@/components/logger.vue'
 import Role from '@/components/role.vue'
@@ -62,7 +62,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {computed, onMounted, reactive, ref} from "vue"
 import {Configs} from '@/types/configs'
 import {Status} from "@/types/status.js";
-import {v4 as uuidv4} from 'uuid'
+import {v4 as uuid} from 'uuid'
 import {useRoute} from "vue-router";
 import {Toaster} from '@/components/ui/toast'
 import {useToast} from '@/components/ui/toast/use-toast'
@@ -72,7 +72,7 @@ const {toast} = useToast()
 
 let ws: WebSocket
 let webSocketUrl: string = ''
-let from: string = uuidv4()
+let from: string = uuid()
 let to: string = ''
 
 const initSocket = function () {
@@ -170,13 +170,11 @@ const runStatus = computed(() => {
 let runTime = ref('');
 const intervalRunTime = () => {
   if (!runTime.value && status.runTime) {
-      let time = getTimeDifference(new Date(status.runTime), new Date())
-      runTime.value = time;
+      runTime.value = getTimeDifference(new Date(status.runTime), new Date());
   }
   setInterval(() => {
     if (status.runTime) {
-      let time = getTimeDifference(new Date(status.runTime), new Date())
-      runTime.value = time;
+      runTime.value = getTimeDifference(new Date(status.runTime), new Date());
     }
   }, 1000)
 }

@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-var router = useRouter();
+let router = useRouter();
 console.log(router);
 
 </script>
