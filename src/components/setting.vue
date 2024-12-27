@@ -6,7 +6,7 @@
           血量魔量检测
         </p>
       </div>
-      <Switch v-model:checked="configs.checkHpMp" @update:checked="changeConfigValue('checkHpMp', !configs.checkHpMp)"/>
+      <Switch v-model:checked="configs.checkHpMp" @update:checked="changeConfig('checkHpMp', $event)"/>
     </div>
 
   <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
@@ -16,7 +16,7 @@
         蘑菇处理
       </p>
     </div>
-    <Select :model-value="configs.mushroomHandle">
+    <Select :model-value="configs.mushroomHandle" @update:modelValue="changeConfig('mushroomHandle', $event)">
       <SelectTrigger class="flex-1">
         <SelectValue placeholder="未选择"/>
       </SelectTrigger>
@@ -43,7 +43,7 @@
         掉线处理
       </p>
     </div>
-    <Select :modelValue="configs.offlineHandle">
+    <Select :modelValue="configs.offlineHandle" @update:modelValue="changeConfig('offlineHandle', $event)">
       <SelectTrigger class="flex-1">
         <SelectValue placeholder="未选择"/>
       </SelectTrigger>
@@ -67,7 +67,7 @@
         小黑处理
       </p>
     </div>
-    <Select :modelValue="configs.smallBlackHandle">
+    <Select :modelValue="configs.smallBlackHandle" @update:modelValue="changeConfig('smallBlackHandle', $event)">
       <SelectTrigger class="flex-1">
         <SelectValue placeholder="未选择"/>
       </SelectTrigger>
@@ -91,7 +91,7 @@
         符文处理
       </p>
     </div>
-    <Select :modelValue="configs.runeHandle">
+    <Select :modelValue="configs.runeHandle" @update:modelValue="changeConfig('runeHandle', $event)">
       <SelectTrigger class="flex-1">
         <SelectValue placeholder="未选择"/>
       </SelectTrigger>
@@ -118,7 +118,7 @@
         需要配置引路
       </p>
     </div>
-    <Select :modelValue="configs.deathHandle">
+    <Select :modelValue="configs.deathHandle" @update:modelValue="changeConfig('deathHandle', $event)">
       <SelectTrigger class="flex-1">
         <SelectValue placeholder="未选择"/>
       </SelectTrigger>
@@ -145,7 +145,8 @@
         分钟 0为不换
       </p>
     </div>
-    <NumberField class="flex-1" id="minute" :modelValue="configs.changeLineInterval" :min="0">
+    <NumberField class="flex-1" id="minute" :modelValue="configs.changeLineInterval" :min="0"
+      @update:modelValue="changeConfig('changeLineInterval', $event)">
       <NumberFieldContent>
         <NumberFieldDecrement/>
         <NumberFieldInput/>
@@ -164,7 +165,8 @@
         秒数 1秒换 0不换
       </p>
     </div>
-    <NumberField class="flex-1" id="second" :modelValue="configs.someoneSecond" :min="0">
+    <NumberField class="flex-1" id="second" :modelValue="configs.someoneSecond" :min="0"
+         @update:modelValue="changeConfig('someoneSecond', $event)">
       <NumberFieldContent>
         <NumberFieldDecrement/>
         <NumberFieldInput/>
@@ -173,50 +175,6 @@
     </NumberField>
   </div>
 
-<!--  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">-->
-<!--    <ScrollText/>-->
-<!--    <div class="flex-1 space-y-1">-->
-<!--      <p class="text-sm font-medium leading-none">-->
-<!--        脚本文件-->
-<!--      </p>-->
-<!--    </div>-->
-<!--    <Select :modelValue="configs.scriptName">-->
-<!--      <SelectTrigger class="flex-1">-->
-<!--        <SelectValue placeholder="未选择"/>-->
-<!--      </SelectTrigger>-->
-<!--      <SelectContent>-->
-<!--        <SelectGroup>-->
-<!--          <SelectItem v-for="item in scripts" :key="item" :value="item">-->
-<!--            {{item}}-->
-<!--          </SelectItem>-->
-<!--        </SelectGroup>-->
-<!--      </SelectContent>-->
-<!--    </Select>-->
-<!--  </div>-->
-
-<!--  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">-->
-<!--    <Fan/>-->
-<!--    <div class="flex-1 space-y-1">-->
-<!--      <p class="text-sm font-medium leading-none">-->
-<!--        角色配置-->
-<!--      </p>-->
-<!--    </div>-->
-<!--    <Select :modelValue="configs.roleName">-->
-<!--      <SelectTrigger class="flex-1">-->
-<!--        <SelectValue placeholder="未选择"/>-->
-<!--      </SelectTrigger>-->
-<!--      <SelectContent>-->
-<!--        <SelectGroup>-->
-<!--          <SelectItem value="DarkKnight">-->
-<!--            黑骑士-->
-<!--          </SelectItem>-->
-<!--          <SelectItem value="Phantom">-->
-<!--            幻影-->
-<!--          </SelectItem>-->
-<!--        </SelectGroup>-->
-<!--      </SelectContent>-->
-<!--    </Select>-->
-<!--  </div>-->
 </template>
 
 <script setup lang="ts">
@@ -227,20 +185,13 @@ import {Switch} from "@/components/ui/switch"
 import {onMounted} from "vue"
 import {Configs} from '@/types/configs'
 
-function changeConfigValue<T extends keyof Configs>(configKey: T, value: Configs[T]) {
-  // props.configs[configKey] = value;
-  emit('setConfig', configKey, value);
+const changeConfig = (key: string, value: any) => {
+  emit('setConfig', key, String(value));
 }
 
-defineProps<{ configs: Configs, scripts: string[] }>()
-// const props = defineProps<{ configs: Configs }>()
-
-// defineProps({
-//   configs: Config
-// })
+defineProps<{ configs: Configs }>()
 
 onMounted(() => {
-  // config.loadData()
 })
 
 const emit = defineEmits(['setConfig'])

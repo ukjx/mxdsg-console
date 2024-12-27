@@ -20,7 +20,7 @@
           <TabsTrigger value="logger">日志</TabsTrigger>
         </TabsList>
         <TabsContent value="setting">
-          <Setting :configs="configs" :scripts="scripts" @setConfig="setConfig"></Setting>
+          <Setting :configs="configs" @setConfig="setConfig"></Setting>
         </TabsContent>
         <TabsContent value="Role">
           <Role></Role>
@@ -110,7 +110,7 @@ const initSocket = function () {
     switch (msg.action) {
       case 'loadConfigs':
         let item = msg.data;
-        configs.checkHpMp = Boolean(item.checkHpMp)
+        configs.checkHpMp = item.checkHpMp.toLowerCase() === 'true'
         configs.mushroomHandle = item.mushroomHandle
         configs.offlineHandle = item.offlineHandle
         configs.smallBlackHandle = item.smallBlackHandle
