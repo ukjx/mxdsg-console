@@ -5,8 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function getTimeDifference(startTime: Date, endTime: Date): string {
-  const diff = endTime.getTime() - startTime.getTime();
+export function getTimeDifference(time: string): string {
+  const startTime = new Date(time.replace(/-/g, '/'));
+  const diff = new Date().getTime() - startTime.getTime();
 
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff / (1000 * 60)) % 60);
@@ -19,7 +20,7 @@ export function getTimeDifference(startTime: Date, endTime: Date): string {
   if (minutes > 0) {
     timeDiff += `${minutes}分`;
   }
-  if (seconds > 0) {
+  if (seconds >= 0) {
     timeDiff += `${seconds}秒`;
   }
 

@@ -172,6 +172,51 @@
       </NumberFieldContent>
     </NumberField>
   </div>
+
+<!--  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">-->
+<!--    <ScrollText/>-->
+<!--    <div class="flex-1 space-y-1">-->
+<!--      <p class="text-sm font-medium leading-none">-->
+<!--        脚本文件-->
+<!--      </p>-->
+<!--    </div>-->
+<!--    <Select :modelValue="configs.scriptName">-->
+<!--      <SelectTrigger class="flex-1">-->
+<!--        <SelectValue placeholder="未选择"/>-->
+<!--      </SelectTrigger>-->
+<!--      <SelectContent>-->
+<!--        <SelectGroup>-->
+<!--          <SelectItem v-for="item in scripts" :key="item" :value="item">-->
+<!--            {{item}}-->
+<!--          </SelectItem>-->
+<!--        </SelectGroup>-->
+<!--      </SelectContent>-->
+<!--    </Select>-->
+<!--  </div>-->
+
+<!--  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">-->
+<!--    <Fan/>-->
+<!--    <div class="flex-1 space-y-1">-->
+<!--      <p class="text-sm font-medium leading-none">-->
+<!--        角色配置-->
+<!--      </p>-->
+<!--    </div>-->
+<!--    <Select :modelValue="configs.roleName">-->
+<!--      <SelectTrigger class="flex-1">-->
+<!--        <SelectValue placeholder="未选择"/>-->
+<!--      </SelectTrigger>-->
+<!--      <SelectContent>-->
+<!--        <SelectGroup>-->
+<!--          <SelectItem value="DarkKnight">-->
+<!--            黑骑士-->
+<!--          </SelectItem>-->
+<!--          <SelectItem value="Phantom">-->
+<!--            幻影-->
+<!--          </SelectItem>-->
+<!--        </SelectGroup>-->
+<!--      </SelectContent>-->
+<!--    </Select>-->
+<!--  </div>-->
 </template>
 
 <script setup lang="ts">

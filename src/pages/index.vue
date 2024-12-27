@@ -6,7 +6,7 @@
         <span>当前: {{currentName}}</span>
         <span>状态: {{runStatus}}</span>
         <span>运行: {{runTime}}</span>
-        <span>频道: 4</span>
+        <span v-if="status.lineNumber">频道: {{status.lineNumber}}线</span>
       </CardDescription>
     </CardHeader>
     <CardContent class="grid gap-5">
@@ -26,8 +26,9 @@
           <Role></Role>
         </TabsContent>
         <TabsContent value="script">
-          <Scripting :scripts="scripts" :currentScript="configs.scriptName" :currentStatus="status" @sendMessage="sendMessage"
-                  @update:currentScript="configs.scriptName=$event" @toast="showToast"></Scripting>
+          <Scripting :scripts="scripts" :currentScript="configs.scriptName" :currentStatus="status"
+                     :configs="configs" @sendMessage="sendMessage"
+                  @update:currentScript="updateCurrentScript" @toast="showToast"></Scripting>
         </TabsContent>
         <TabsContent value="monitor">
           <Monitor></Monitor>
@@ -45,6 +46,16 @@
       </Button>
     </CardFooter>
   </Card>
+
+  <AlertDialog v-model:open="showMask">
+    <AlertDialogContent class="w-[140px] p-2 text-center rounded-xl">
+      <AlertDialogTitle>
+        <AlertDialogDescription>
+          <Label>{{maskText}}</Label>
+        </AlertDialogDescription>
+      </AlertDialogTitle>
+    </AlertDialogContent>
+  </AlertDialog>
 
   <Toaster/>
 </template>
@@ -67,26 +78,35 @@ import {useRoute} from "vue-router";
 import {Toaster} from '@/components/ui/toast'
 import {useToast} from '@/components/ui/toast/use-toast'
 import {getTimeDifference} from "@/lib/utils.js";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
+import {Label} from "@/components/ui/label";
 
 const {toast} = useToast()
 
 let ws: WebSocket
 let webSocketUrl: string = ''
-let from: string = uuid()
-let to: string = ''
+let machineId: string = ''
 
 const initSocket = function () {
-  ws = new WebSocket(webSocketUrl + from)
+  let uniqueId: string = uuid()
+  showMask.value = true
+  ws = new WebSocket(`${webSocketUrl}?type=client&machineId=${machineId}&uniqueId=${uniqueId}`);
   ws.onopen = function () {
     console.log('WebSocket已连接')
-    ws.send(JSON.stringify({from: from, to: to, action: 'getConfigs'}))
-    ws.send(JSON.stringify({from: from, to: to, action: 'getScripts'}))
-    ws.send(JSON.stringify({from: from, to: to, action: 'getStatus'}))
+    showMask.value = false;
+    sendMessage('getConfigs')
+    sendMessage('getScripts')
+    sendMessage('getStatus')
   }
   ws.onmessage = function (event) {
     // console.log('收到消息：' + event.data)
     const msg = JSON.parse(event.data)
-    console.log(msg)
+    // console.log(msg)
     switch (msg.action) {
       case 'loadConfigs':
         let item = msg.data;
@@ -109,15 +129,22 @@ const initSocket = function () {
         status.isRun = Boolean(msg.data.isRun)
         status.isRecord = Boolean(msg.data.isRecord)
         status.runTime = msg.data.runTime
-        intervalRunTime();
+        status.lineNumber = msg.data.lineNumber
+        // intervalRunTime()
         break;
       case 'toast':
         toast({ title: '提示', description: msg.data, duration: 1000 })
         break;
     }
   }
+  ws.onerror = function (event) {
+    console.log('WebSocket报错')
+    console.log(event)
+  }
   ws.onclose = function () {
     console.log('WebSocket已关闭')
+    maskText.value = '重新连接...'
+    initSocket()
   }
 }
 
@@ -139,15 +166,20 @@ let scripts = ref<string[]>([]);
 let status: Status = reactive({
   isRun: false,
   isRecord: false,
-  runTime: null
+  runTime: null,
+  lineNumber: null
 });
+const updateCurrentScript = (value: string) => {
+  configs.scriptName = value
+  setConfig('scriptName', value)
+}
 
 const setConfig = function (key: string, value: string) {
   console.log('setConfig:', key, value)
-  // sendMessage('setConfig', `${key}=${value}`)
+  sendMessage('setConfig', `${key}=${value}`)
 }
-const sendMessage = function (action: string, data: any) {
-  ws.send(JSON.stringify({from: from, to: to, action: action, data: data}))
+const sendMessage = function (action: string, data?: any) {
+  ws.send(JSON.stringify({action: action, data: data}))
 }
 const showToast = (msg: string) => {
   toast({
@@ -158,8 +190,12 @@ const showToast = (msg: string) => {
 }
 
 const currentName = computed(() => {
-  if (configs.taskName === 'Execute' || configs.taskName === 'execute')
+  if (configs.taskName === 'execute' || configs.taskName === 'Execute')
     return configs.scriptName.replace(/\.txt$/, '')
+  else if (configs.taskName === 'darkKnight' || configs.taskName === 'DarkKnight')
+    return '黑骑士'
+  else if (configs.taskName === 'phantom' || configs.taskName === 'Phantom')
+    return '幻影'
   else
     return configs.taskName
 })
@@ -167,17 +203,16 @@ const runStatus = computed(() => {
   return status.isRun?'运行中':'未运行'
 })
 
-let runTime = ref('');
+let runTime = ref('')
 const intervalRunTime = () => {
-  if (!runTime.value && status.runTime) {
-      runTime.value = getTimeDifference(new Date(status.runTime), new Date());
-  }
   setInterval(() => {
     if (status.runTime) {
-      runTime.value = getTimeDifference(new Date(status.runTime), new Date());
+      runTime.value = getTimeDifference(status.runTime);
     }
   }, 1000)
 }
+let showMask = ref(false)
+let maskText = ref('')
 
 onMounted(() => {
   const route = useRoute()
@@ -187,8 +222,10 @@ onMounted(() => {
   const param = JSON.parse(decodedString)
 
   webSocketUrl = param['webSocketUrl']
-  to = param['uniqueId']
+  machineId = param['machineId']
+  maskText.value = '连接中...'
   initSocket()
+  intervalRunTime()
 })
 </script>
 

@@ -1,5 +1,34 @@
 <template>
+
   <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+    <Lightbulb/>
+    <div class="flex-1 space-y-1">
+      <p class="text-sm font-medium leading-none">
+        执行任务
+      </p>
+    </div>
+    <Select :modelValue="configs.taskName" @update:modelValue="taskChange">
+      <SelectTrigger class="flex-1">
+        <SelectValue placeholder="未选择"/>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="execute">
+            执行脚本
+          </SelectItem>
+          <SelectItem value="darkKnight">
+            黑骑士
+          </SelectItem>
+          <SelectItem value="phantom">
+            幻影
+          </SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div v-if="configs.taskName == 'execute'" class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+    <ScrollText/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
         选择脚本
@@ -38,11 +67,11 @@
   <div class="grid grid-cols-2 mb-1">
     <Button v-if="!currentStatus.isRecord" @click="beginRecord" class="mr-1 bg-lime-500">
       <Videotape class="mr-2 h-4 w-4"/>
-      开始录制
+      开始录制(F4)
     </Button>
     <Button v-if="currentStatus.isRecord" @click="endRecord" class="mr-1 bg-emerald-600">
       <Videotape class="mr-2 h-4 w-4"/>
-      停止录制
+      停止录制(F4)
     </Button>
     <Button class="ml-1 bg-red-600" @click="deleteDialog = true">
       <Trash2 class="mr-2 h-4 w-4"/>
@@ -51,11 +80,11 @@
   </div>
   <Button v-if="!currentStatus.isRun" class="w-full mb-1 bg-sky-500" @click="enable">
     <MonitorCheck class="mr-2 h-4 w-4"/>
-    运行脚本
+    运行任务(F5)
   </Button>
   <Button v-if="currentStatus.isRun" class="w-full mb-1 bg-gray-500" @click="disable">
     <MonitorPause class="mr-2 h-4 w-4"/>
-    停止脚本
+    停止任务(F5)
   </Button>
 
   <AlertDialog v-model:open="deleteDialog">
@@ -93,13 +122,15 @@
 
 import {cn} from "@/lib/utils.ts";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
-import {Check, ChevronsUpDown, MonitorCheck, MonitorPause, Trash2, Videotape} from "lucide-vue-next";
+import {Check, ChevronsUpDown, Lightbulb, ScrollText, MonitorCheck, MonitorPause, Trash2, Videotape} from "lucide-vue-next";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
 import {AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
 import {Input} from '@/components/ui/input'
 import {computed, onMounted, ref} from 'vue'
 import {Status} from "@/types/status.ts";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Configs} from "@/types/configs.ts";
 
 const open = ref(false)
 const isRecord = ref(false)
@@ -139,7 +170,7 @@ const updateCurrentScript = (newValue: string) => {
   emit('update:currentScript', newValue);
 }
 
-const props = defineProps<{ scripts: string[], currentScript: string, currentStatus: Status }>()
+const props = defineProps<{ scripts: string[], currentScript: string, currentStatus: Status, configs: Configs }>()
 
 const scriptsObject = computed(() => {
   return props.scripts.map(x => {
@@ -149,10 +180,15 @@ const scriptsObject = computed(() => {
 // const currentScriptName = computed(() => {
 //   return props.currentScript.replace(/\.txt$/, '')
 // })
+const taskChange = (value: string) => {
+  console.log('taskChange', value)
+  props.configs.taskName = value
+  emit('sendMessage', 'setConfig', `taskName=${value}`)
+}
 
 onMounted(() => {
-  console.log(scriptsObject.value)
-  console.log(props.currentScript)
+  // console.log(scriptsObject.value)
+  // console.log(props.currentScript)
 })
 
 const emit = defineEmits(['sendMessage', 'update:currentScript', 'toast'])
