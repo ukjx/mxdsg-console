@@ -1,5 +1,5 @@
 <template>
-  <template v-for="(item, index) in logs" :key="item.LogId">
+  <template v-for="(item, index) in logs">
     <div class=" flex items-center space-x-4 rounded-md border p-3 pb-2 mb-1">
       <div class="flex-1">
         <div class="flex">
