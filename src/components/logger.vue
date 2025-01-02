@@ -3,7 +3,7 @@
     <div class=" flex items-center space-x-4 rounded-md border p-3 pb-2 mb-1">
       <div class="flex-1">
         <div class="flex">
-          <p class="flex-1 text-sm font-medium leading-none leading-none">
+          <p class="flex-1 text-sm font-medium leading-none">
             {{index + 1}} {{ item.LogTitle }}
           </p>
           <p class="flex-1 text-sm text-muted-foreground leading-none text-right">
