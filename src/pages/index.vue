@@ -34,7 +34,7 @@
           <Monitor></Monitor>
         </TabsContent>
         <TabsContent value="logger">
-          <Logger></Logger>
+          <Logger :logs="logs"></Logger>
         </TabsContent>
       </Tabs>
 
@@ -73,6 +73,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {computed, onMounted, reactive, ref} from "vue"
 import {Configs} from '@/types/configs'
 import {Status} from "@/types/status.js";
+import {Logs} from "@/types/logs.js";
 import {v4 as uuid} from 'uuid'
 import {useRoute} from "vue-router";
 import {Toaster} from '@/components/ui/toast'
@@ -91,9 +92,10 @@ const {toast} = useToast()
 let ws: WebSocket
 let webSocketUrl: string = ''
 let machineId: string = ''
+let uniqueId: string = ''
 
 const initSocket = function () {
-  let uniqueId: string = uuid()
+  uniqueId = uuid()
   showMask.value = true
   ws = new WebSocket(`${webSocketUrl}?type=client&machineId=${machineId}&uniqueId=${uniqueId}`);
   ws.onopen = function () {
@@ -102,6 +104,7 @@ const initSocket = function () {
     sendMessage('getConfigs')
     sendMessage('getScripts')
     sendMessage('getStatus')
+    sendMessage('getLogs', 1)
   }
   ws.onmessage = function (event) {
     // console.log('收到消息：' + event.data)
@@ -131,6 +134,10 @@ const initSocket = function () {
         status.runTime = msg.data.runTime
         status.lineNumber = msg.data.lineNumber
         // intervalRunTime()
+        break;
+      case 'loadLogs':
+        console.log(msg.data)
+        logs.value = msg.data;
         break;
       case 'toast':
         toast({ title: '提示', description: msg.data, duration: 1000 })
@@ -169,6 +176,7 @@ let status: Status = reactive({
   runTime: null,
   lineNumber: null
 });
+let logs = ref<Logs[]>([]);
 const updateCurrentScript = (value: string) => {
   configs.scriptName = value
   setConfig('scriptName', value)
@@ -176,10 +184,10 @@ const updateCurrentScript = (value: string) => {
 
 const setConfig = function (key: string, value: string) {
   console.log('setConfig:', key, value)
-  sendMessage('setConfig', `${key}=${value}`)
+  // sendMessage('setConfig', `${key}=${value}`)
 }
 const sendMessage = function (action: string, data?: any) {
-  ws.send(JSON.stringify({action: action, data: data}))
+  ws.send(JSON.stringify({action: action, from: uniqueId, data: data}))
 }
 const showToast = (msg: string) => {
   toast({

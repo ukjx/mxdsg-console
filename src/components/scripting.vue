@@ -13,13 +13,13 @@
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="execute">
+          <SelectItem value="Execute">
             执行脚本
           </SelectItem>
-          <SelectItem value="darkKnight">
+          <SelectItem value="DarkKnight">
             黑骑士
           </SelectItem>
-          <SelectItem value="phantom">
+          <SelectItem value="Phantom">
             幻影
           </SelectItem>
         </SelectGroup>
@@ -110,7 +110,7 @@
           请输入脚本文件名
         </AlertDialogDescription>
       </AlertDialogHeader>
-      <Input type="text" placeholder="可输入职业和地图名" :model-value="scriptName"/>
+      <Input type="text" placeholder="可输入职业和地图名" v-model="scriptName"/>
       <AlertDialogFooter>
         <AlertDialogAction @click="saveScript">保存</AlertDialogAction>
       </AlertDialogFooter>
@@ -152,6 +152,7 @@ const endRecord = () => {
   saveScriptDialog.value = true
 }
 const saveScript = () => {
+  console.log(scriptName.value)
   if (!scriptName.value) {
     emit('toast', '脚本文件名不能为空');
     return
@@ -177,18 +178,14 @@ const scriptsObject = computed(() => {
     return {label: x.replace(/\.txt$/, ''), value: x}
   })
 })
-// const currentScriptName = computed(() => {
-//   return props.currentScript.replace(/\.txt$/, '')
-// })
+
 const taskChange = (value: string) => {
   console.log('taskChange', value)
   props.configs.taskName = value
-  emit('sendMessage', 'setConfig', `taskName=${value}`)
+  // emit('sendMessage', 'setConfig', `taskName=${value}`)
 }
 
 onMounted(() => {
-  // console.log(scriptsObject.value)
-  // console.log(props.currentScript)
 })
 
 const emit = defineEmits(['sendMessage', 'update:currentScript', 'toast'])
