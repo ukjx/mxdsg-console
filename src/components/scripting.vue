@@ -22,6 +22,9 @@
           <SelectItem value="Phantom">
             幻影
           </SelectItem>
+          <SelectItem value="WildHunter">
+            豹弩游侠
+          </SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
@@ -182,7 +185,7 @@ const scriptsObject = computed(() => {
 const taskChange = (value: string) => {
   console.log('taskChange', value)
   props.configs.taskName = value
-  // emit('sendMessage', 'setConfig', `taskName=${value}`)
+  emit('sendMessage', 'setConfig', `taskName=${value}`)
 }
 
 onMounted(() => {

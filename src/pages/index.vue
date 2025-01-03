@@ -34,7 +34,7 @@
           <Monitor></Monitor>
         </TabsContent>
         <TabsContent value="logger">
-          <Logger :logs="logs"></Logger>
+          <Logger :logs="logs" @clearLogs="firstLog=true" @sendMessage="sendMessage"></Logger>
         </TabsContent>
       </Tabs>
 
@@ -104,7 +104,7 @@ const initSocket = function () {
     sendMessage('getConfigs')
     sendMessage('getScripts')
     sendMessage('getStatus')
-    sendMessage('getLogs', 1)
+    // setConfig('ignoreSmallBlack', 'false')
   }
   ws.onmessage = function (event) {
     // console.log('收到消息：' + event.data)
@@ -136,8 +136,12 @@ const initSocket = function () {
         // intervalRunTime()
         break;
       case 'loadLogs':
-        console.log(msg.data)
-        logs.value = msg.data;
+        if (firstLog.value) {
+          firstLog.value = false
+          logs.value = msg.data
+        } else {
+          logs.value = logs.value.concat(msg.data)
+        }
         break;
       case 'toast':
         toast({ title: '提示', description: msg.data, duration: 1000 })
@@ -184,7 +188,7 @@ const updateCurrentScript = (value: string) => {
 
 const setConfig = function (key: string, value: string) {
   console.log('setConfig:', key, value)
-  // sendMessage('setConfig', `${key}=${value}`)
+  sendMessage('setConfig', `${key}=${value}`)
 }
 const sendMessage = function (action: string, data?: any) {
   ws.send(JSON.stringify({action: action, from: uniqueId, data: data}))
@@ -204,6 +208,8 @@ const currentName = computed(() => {
     return '黑骑士'
   else if (configs.taskName === 'phantom' || configs.taskName === 'Phantom')
     return '幻影'
+  else if (configs.taskName === 'wildHunter' || configs.taskName === 'WildHunter')
+    return '豹弩游侠'
   else
     return configs.taskName
 })
@@ -221,16 +227,20 @@ const intervalRunTime = () => {
 }
 let showMask = ref(false)
 let maskText = ref('')
+let firstLog = ref(true)
 
 onMounted(() => {
   const route = useRoute()
-  if (!route.query.param) return
-  let base64EncodedString = route.query.param.toString()
-  const decodedString = atob(base64EncodedString)
-  const param = JSON.parse(decodedString)
-
-  webSocketUrl = param['webSocketUrl']
-  machineId = param['machineId']
+  if (route.query.param) {
+    let base64EncodedString = route.query.param.toString()
+    const decodedString = atob(base64EncodedString)
+    const param = JSON.parse(decodedString)
+    webSocketUrl = param['webSocketUrl']
+    machineId = param['machineId']
+  } else {
+    webSocketUrl = `ws://${window.location.hostname}:12581/`
+    machineId = '179B7EB6-FE0F-4646-A907-D1B80B7C088B'
+  }
   maskText.value = '连接中...'
   initSocket()
   intervalRunTime()
