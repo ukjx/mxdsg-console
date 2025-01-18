@@ -1,5 +1,6 @@
 export interface Configs {
     checkHpMp: boolean
+    ignoreSmallBlack: boolean
     mushroomHandle: string
     offlineHandle: string
     smallBlackHandle: string

@@ -13,16 +13,19 @@
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="Execute">
+          <SelectItem value="execute">
             执行脚本
           </SelectItem>
-          <SelectItem value="DarkKnight">
+          <SelectItem value="darkKnight">
             黑骑士
           </SelectItem>
-          <SelectItem value="Phantom">
+          <SelectItem value="phantom">
             幻影
           </SelectItem>
-          <SelectItem value="WildHunter">
+          <SelectItem value="paladin">
+            圣骑士
+          </SelectItem>
+          <SelectItem value="wildHunter">
             豹弩游侠
           </SelectItem>
         </SelectGroup>
@@ -70,24 +73,36 @@
   <div class="grid grid-cols-2 mb-1">
     <Button v-if="!currentStatus.isRecord" @click="beginRecord" class="mr-1 bg-lime-500">
       <Videotape class="mr-2 h-4 w-4"/>
-      开始录制(F4)
+      开始录制(F8)
     </Button>
     <Button v-if="currentStatus.isRecord" @click="endRecord" class="mr-1 bg-emerald-600">
       <Videotape class="mr-2 h-4 w-4"/>
-      停止录制(F4)
+      停止录制(F8)
     </Button>
     <Button class="ml-1 bg-red-600" @click="deleteDialog = true">
       <Trash2 class="mr-2 h-4 w-4"/>
       删除脚本
     </Button>
   </div>
-  <Button v-if="!currentStatus.isRun" class="w-full mb-1 bg-sky-500" @click="enable">
-    <MonitorCheck class="mr-2 h-4 w-4"/>
-    运行任务(F5)
-  </Button>
-  <Button v-if="currentStatus.isRun" class="w-full mb-1 bg-gray-500" @click="disable">
-    <MonitorPause class="mr-2 h-4 w-4"/>
-    停止任务(F5)
+
+  <div class="grid grid-cols-2 mb-1">
+    <Button v-if="!currentStatus.isRun" class="mr-1 bg-sky-500" @click="sendMessage('enable')">
+      <MonitorCheck class="mr-2 h-4 w-4"/>
+      运行任务(F9)
+    </Button>
+    <Button v-if="currentStatus.isRun" class="mr-1 bg-gray-500" @click="sendMessage('disable')">
+      <MonitorPause class="mr-2 h-4 w-4"/>
+      停止任务(F9)
+    </Button>
+    <Button class="ml-1 bg-black" @click="sendMessage('exit')">
+      <MonitorX class="mr-2 h-4 w-4"/>
+      退出程序(F10)
+    </Button>
+  </div>
+
+  <Button class="w-full mt-1 bg-teal-600" @click="sendMessage('screenshot')">
+    <Fullscreen class="mr-2 h-4 w-4"/>
+    截屏(F11)
   </Button>
 
   <AlertDialog v-model:open="deleteDialog">
@@ -125,7 +140,7 @@
 
 import {cn} from "@/lib/utils.ts";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
-import {Check, ChevronsUpDown, Lightbulb, ScrollText, MonitorCheck, MonitorPause, Trash2, Videotape} from "lucide-vue-next";
+import {Check, ChevronsUpDown, Lightbulb, ScrollText, MonitorCheck, MonitorPause, MonitorX, Fullscreen, Trash2, Videotape} from "lucide-vue-next";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
 import {AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
@@ -163,11 +178,9 @@ const saveScript = () => {
   emit('sendMessage', 'saveScript', scriptName.value);
   saveScriptDialog.value = false
 }
-const enable = () => {
-  emit('sendMessage', 'enable');
-}
-const disable = () => {
-  emit('sendMessage', 'disable');
+
+const sendMessage = (action: string) => {
+  emit('sendMessage', action);
 }
 
 const updateCurrentScript = (newValue: string) => {

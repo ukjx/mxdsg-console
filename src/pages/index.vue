@@ -114,6 +114,7 @@ const initSocket = function () {
       case 'loadConfigs':
         let item = msg.data;
         configs.checkHpMp = item.checkHpMp.toLowerCase() === 'true'
+        configs.ignoreSmallBlack = item.ignoreSmallBlack.toLowerCase() === 'true'
         configs.mushroomHandle = item.mushroomHandle
         configs.offlineHandle = item.offlineHandle
         configs.smallBlackHandle = item.smallBlackHandle
@@ -161,6 +162,7 @@ const initSocket = function () {
 
 let configs: Configs = reactive({
   checkHpMp: false,
+  ignoreSmallBlack: false,
   mushroomHandle: '',
   offlineHandle: '',
   smallBlackHandle: '',
@@ -202,13 +204,15 @@ const showToast = (msg: string) => {
 }
 
 const currentName = computed(() => {
-  if (configs.taskName === 'execute' || configs.taskName === 'Execute')
+  if (configs.taskName === 'execute')
     return configs.scriptName.replace(/\.txt$/, '')
-  else if (configs.taskName === 'darkKnight' || configs.taskName === 'DarkKnight')
+  else if (configs.taskName === 'darkKnight')
     return '黑骑士'
-  else if (configs.taskName === 'phantom' || configs.taskName === 'Phantom')
+  else if (configs.taskName === 'phantom')
     return '幻影'
-  else if (configs.taskName === 'wildHunter' || configs.taskName === 'WildHunter')
+  else if (configs.taskName === 'paladin')
+    return '圣骑士'
+  else if (configs.taskName === 'wildHunter')
     return '豹弩游侠'
   else
     return configs.taskName

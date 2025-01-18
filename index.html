@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="机器控制" />
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon-precomposed" href="/vite.png">
-    <link rel="icon" href="/vite.png">
+    <link rel="apple-touch-icon-precomposed" href="/eye2.png">
+    <link rel="icon" href="/eye1.png">
     <title>机器控制</title>
     <style>
         html {
@@ -39,13 +39,20 @@
     <script>
       // 禁止右键
       document.addEventListener('contextmenu', (event) => {
-        event.preventDefault();
-      }, false);
+        event.preventDefault()
+      }, false)
+
+      // 禁止F5
+      window.addEventListener('keydown',  (event) => {
+        if (event.key === 'F5') {
+          event.preventDefault()
+        }
+      })
 
       // // 禁止拖动整个页面
-      // document.body.addEventListener('touchmove', (e) => {
-      //   e.preventDefault();
-      // }, { passive: false });
+      // document.body.addEventListener('touchmove', (event) => {
+      //   event.preventDefault()
+      // }, { passive: false })
     </script>
 </body>
 

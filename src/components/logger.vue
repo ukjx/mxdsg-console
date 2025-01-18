@@ -4,10 +4,10 @@
       <div class="flex-1">
         <div class="flex">
           <p class="flex-1 text-sm font-medium leading-none">
-            {{ index + 1 }} {{ item.LogTitle }}
+            {{ index + 1 }}.{{ item.logTitle }}
           </p>
           <p class="flex text-sm text-muted-foreground leading-none text-right">
-            {{ formatTime(item.LogTime) }}
+            {{ formatTime(item.logTime) }}
           </p>
         </div>
         <div class="p-0 pt-0 mt-2">
@@ -18,7 +18,7 @@
                       d="M.877 7.5a6.623 6.623 0 1 1 13.246 0a6.623 6.623 0 0 1-13.246 0M7.5 1.827a5.673 5.673 0 1 0 0 11.346a5.673 5.673 0 0 0 0-11.346"
                       clip-rule="evenodd"></path>
               </svg>
-              {{ item.LogContent }}
+              {{ item.logContent }}
             </div>
           </div>
         </div>

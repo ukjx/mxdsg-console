@@ -1,7 +1,7 @@
 export interface Logs {
-    LogId: string
-    LogType: string
-    LogTitle: string
-    LogContent: string
-    LogTime: string
+    logId: string
+    logType: string
+    logTitle: string
+    logContent: string
+    logTime: string
 }

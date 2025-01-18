@@ -1,13 +1,22 @@
 <template>
-    <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
-      <BatteryLow/>
-      <div class="flex-1 space-y-1">
-        <p class="text-sm font-medium leading-none">
-          血量魔量检测
-        </p>
-      </div>
-      <Switch v-model:checked="configs.checkHpMp" @update:checked="changeConfig('checkHpMp', $event)"/>
+  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+    <BatteryLow/>
+    <div class="flex-1 space-y-1">
+      <p class="text-sm font-medium leading-none">
+        血量魔量检测
+      </p>
     </div>
+    <Switch v-model:checked="configs.checkHpMp" @update:checked="changeConfig('checkHpMp', $event)"/>
+  </div>
+  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+    <TrainFront/>
+    <div class="flex-1 space-y-1">
+      <p class="text-sm font-medium leading-none">
+        忽略小黑
+      </p>
+    </div>
+    <Switch v-model:checked="configs.ignoreSmallBlack" @update:checked="changeConfig('ignoreSmallBlack', $event)"/>
+  </div>
 
   <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
     <Target/>
@@ -186,7 +195,10 @@ import {onMounted} from "vue"
 import {Configs} from '@/types/configs'
 
 const changeConfig = (key: string, value: any) => {
-  emit('setConfig', key, String(value));
+  let val = String(value)
+  val = val == 'true' ? 'True' : val
+  val = val == 'false' ? 'False' : val
+  emit('setConfig', key, val);
 }
 
 defineProps<{ configs: Configs }>()
