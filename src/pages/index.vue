@@ -214,6 +214,8 @@ const currentName = computed(() => {
     return '圣骑士'
   else if (configs.taskName === 'wildHunter')
     return '豹弩游侠'
+  else if (configs.taskName === 'demonSlayer')
+    return '恶魔猎手'
   else
     return configs.taskName
 })

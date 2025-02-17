@@ -14,7 +14,10 @@
       <SelectContent>
         <SelectGroup>
           <SelectItem value="execute">
-            执行脚本
+            按键录播
+          </SelectItem>
+          <SelectItem value="fixedPoint">
+            定点录播
           </SelectItem>
           <SelectItem value="darkKnight">
             黑骑士
@@ -27,6 +30,9 @@
           </SelectItem>
           <SelectItem value="wildHunter">
             豹弩游侠
+          </SelectItem>
+          <SelectItem value="demonSlayer">
+            恶魔猎手
           </SelectItem>
         </SelectGroup>
       </SelectContent>
@@ -71,15 +77,15 @@
     </Popover>
   </div>
   <div class="grid grid-cols-2 mb-1">
-    <Button v-if="!currentStatus.isRecord" @click="beginRecord" class="mr-1 bg-lime-500">
+    <Button v-if="configs.taskName == 'execute' && !currentStatus.isRecord" @click="beginRecord" class="mr-1 bg-lime-500">
       <Videotape class="mr-2 h-4 w-4"/>
       开始录制(F8)
     </Button>
-    <Button v-if="currentStatus.isRecord" @click="endRecord" class="mr-1 bg-emerald-600">
+    <Button v-if="configs.taskName == 'execute' && currentStatus.isRecord" @click="endRecord" class="mr-1 bg-emerald-600">
       <Videotape class="mr-2 h-4 w-4"/>
       停止录制(F8)
     </Button>
-    <Button class="ml-1 bg-red-600" @click="deleteDialog = true">
+    <Button v-if="configs.taskName == 'execute'" class="ml-1 bg-red-600" @click="deleteDialog = true">
       <Trash2 class="mr-2 h-4 w-4"/>
       删除脚本
     </Button>
