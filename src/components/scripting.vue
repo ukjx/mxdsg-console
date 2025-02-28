@@ -14,10 +14,10 @@
       <SelectContent>
         <SelectGroup>
           <SelectItem value="execute">
-            按键录播
+            录播刷图
           </SelectItem>
           <SelectItem value="fixedPoint">
-            定点录播
+            定点刷图
           </SelectItem>
           <SelectItem value="darkKnight">
             黑骑士
@@ -76,37 +76,47 @@
       </PopoverContent>
     </Popover>
   </div>
-  <div class="grid grid-cols-2 mb-1">
-    <Button v-if="configs.taskName == 'execute' && !currentStatus.isRecord" @click="beginRecord" class="mr-1 bg-lime-500">
-      <Videotape class="mr-2 h-4 w-4"/>
-      开始录制(F8)
-    </Button>
-    <Button v-if="configs.taskName == 'execute' && currentStatus.isRecord" @click="endRecord" class="mr-1 bg-emerald-600">
-      <Videotape class="mr-2 h-4 w-4"/>
-      停止录制(F8)
-    </Button>
-    <Button v-if="configs.taskName == 'execute'" class="ml-1 bg-red-600" @click="deleteDialog = true">
-      <Trash2 class="mr-2 h-4 w-4"/>
-      删除脚本
-    </Button>
-  </div>
 
-  <div class="grid grid-cols-2 mb-1">
-    <Button v-if="!currentStatus.isRun" class="mr-1 bg-sky-500" @click="sendMessage('enable')">
+  <div class="grid grid-cols-2 mt-2">
+    <Button v-if="!currentStatus.isRunning" class="mr-1 bg-sky-500" @click="sendMessage('program', 'enable')">
       <MonitorCheck class="mr-2 h-4 w-4"/>
       运行任务(F9)
     </Button>
-    <Button v-if="currentStatus.isRun" class="mr-1 bg-gray-500" @click="sendMessage('disable')">
+    <Button v-if="currentStatus.isRunning" class="mr-1 bg-gray-500" @click="sendMessage('program', 'disable')">
       <MonitorPause class="mr-2 h-4 w-4"/>
       停止任务(F9)
     </Button>
-    <Button class="ml-1 bg-black" @click="sendMessage('exit')">
+    <Button class="ml-1 bg-black" @click="sendMessage('program', 'exit')">
       <MonitorX class="mr-2 h-4 w-4"/>
       退出程序(F10)
     </Button>
   </div>
 
-  <Button class="w-full mt-1 bg-teal-600" @click="sendMessage('screenshot')">
+  <div v-if="configs.taskName == 'execute'" class="grid grid-cols-2 mt-2">
+    <Button v-if="!currentStatus.isRecord" @click="beginRecord" class="mr-1 bg-lime-500">
+      <Videotape class="mr-2 h-4 w-4"/>
+      开始录制
+    </Button>
+    <Button v-if="currentStatus.isRecord" @click="endRecord" class="mr-1 bg-emerald-600">
+      <Videotape class="mr-2 h-4 w-4"/>
+      停止录制
+    </Button>
+    <Button class="ml-1 bg-red-600" @click="deleteDialog = true">
+      <Trash2 class="mr-2 h-4 w-4"/>
+      删除脚本
+    </Button>
+  </div>
+
+  <Button v-if="configs.taskName == 'fixedPoint' && !currentStatus.isRecord" @click="beginRecord" class="w-full mt-2 bg-lime-500">
+    <Videotape class="mr-2 h-4 w-4"/>
+    开始录制
+  </Button>
+  <Button v-if="configs.taskName == 'fixedPoint' && currentStatus.isRecord" @click="endRecord" class="w-full mt-2 bg-emerald-600">
+    <Videotape class="mr-2 h-4 w-4"/>
+    停止录制
+  </Button>
+
+  <Button class="w-full mt-2 bg-teal-600" @click="sendMessage('program', 'screenshot')">
     <Fullscreen class="mr-2 h-4 w-4"/>
     截屏(F11)
   </Button>
@@ -167,13 +177,13 @@ const deleteScript = () => {
   deleteDialog.value = false
 }
 const beginRecord = () => {
-  emit('sendMessage', 'beginRecord');
+  emit('sendMessage', 'point', 'beginRecord');
   isRecord.value = true
 }
 const endRecord = () => {
-  emit('sendMessage', 'endRecord');
+  emit('sendMessage', 'point', 'endRecord');
   isRecord.value = false
-  saveScriptDialog.value = true
+  // saveScriptDialog.value = true
 }
 const saveScript = () => {
   console.log(scriptName.value)
@@ -181,12 +191,12 @@ const saveScript = () => {
     emit('toast', '脚本文件名不能为空');
     return
   }
-  emit('sendMessage', 'saveScript', scriptName.value);
+  emit('sendMessage', 'script', 'saveScript', scriptName.value);
   saveScriptDialog.value = false
 }
 
-const sendMessage = (action: string) => {
-  emit('sendMessage', action);
+const sendMessage = (service: string, action: string) => {
+  emit('sendMessage', service, action);
 }
 
 const updateCurrentScript = (newValue: string) => {
@@ -204,7 +214,7 @@ const scriptsObject = computed(() => {
 const taskChange = (value: string) => {
   console.log('taskChange', value)
   props.configs.taskName = value
-  emit('sendMessage', 'setConfig', `taskName=${value}`)
+  emit('sendMessage', 'config', 'setConfig', `taskName=${value}`)
 }
 
 onMounted(() => {

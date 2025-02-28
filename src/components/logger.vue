@@ -76,16 +76,16 @@ const onScroll = () => {
 
   if (isScrollToBottom.value) {
     pageNumber.value += 1;
-    emit('sendMessage', 'getLogs', pageNumber.value)
+    emit('sendMessage', 'log', 'getLogs', pageNumber.value)
   } else if (isScrollToTop.value) {
     pageNumber.value = 1;
     emit('clearLogs')
-    emit('sendMessage', 'getLogs', pageNumber.value)
+    emit('sendMessage', 'log', 'getLogs', pageNumber.value)
   }
 };
 
 onMounted(() => {
-  emit('sendMessage', 'getLogs', pageNumber.value)
+  emit('sendMessage', 'log', 'getLogs', pageNumber.value)
   window.addEventListener('scroll', onScroll);
 });
 

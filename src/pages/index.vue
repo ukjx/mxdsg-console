@@ -101,9 +101,9 @@ const initSocket = function () {
   ws.onopen = function () {
     console.log('WebSocket已连接')
     showMask.value = false;
-    sendMessage('getConfigs')
-    sendMessage('getScripts')
-    sendMessage('getStatus')
+    sendMessage('config', 'getConfigs')
+    sendMessage('script', 'getScripts')
+    sendMessage('program', 'getStatus')
     // setConfig('ignoreSmallBlack', 'false')
   }
   ws.onmessage = function (event) {
@@ -130,7 +130,7 @@ const initSocket = function () {
         scripts.value = msg.data;
         break
       case 'loadStatus':
-        status.isRun = Boolean(msg.data.isRun)
+        status.isRunning = Boolean(msg.data.isRunning)
         status.isRecord = Boolean(msg.data.isRecord)
         status.runTime = msg.data.runTime
         status.lineNumber = msg.data.lineNumber
@@ -177,7 +177,7 @@ let configs: Configs = reactive({
 
 let scripts = ref<string[]>([]);
 let status: Status = reactive({
-  isRun: false,
+  isRunning: false,
   isRecord: false,
   runTime: null,
   lineNumber: null
@@ -190,10 +190,10 @@ const updateCurrentScript = (value: string) => {
 
 const setConfig = function (key: string, value: string) {
   console.log('setConfig:', key, value)
-  sendMessage('setConfig', `${key}=${value}`)
+  sendMessage('config', 'setConfig', `${key}=${value}`)
 }
-const sendMessage = function (action: string, data?: any) {
-  ws.send(JSON.stringify({action: action, from: uniqueId, data: data}))
+const sendMessage = function (service: string, action: string, data?: any) {
+  ws.send(JSON.stringify({service: service, action: action, from: uniqueId, data: data}))
 }
 const showToast = (msg: string) => {
   toast({
@@ -216,11 +216,13 @@ const currentName = computed(() => {
     return '豹弩游侠'
   else if (configs.taskName === 'demonSlayer')
     return '恶魔猎手'
+  else if (configs.taskName === 'fixedPoint')
+    return '定点刷图'
   else
     return configs.taskName
 })
 const runStatus = computed(() => {
-  return status.isRun?'运行中':'未运行'
+  return status.isRunning?'运行中':'未运行'
 })
 
 let runTime = ref('')
@@ -250,6 +252,7 @@ onMounted(() => {
   maskText.value = '连接中...'
   initSocket()
   intervalRunTime()
+  // http://localhost:5173/#/?param=ewogICAgIndlYlNvY2tldFVybCI6ICJ3czovLzE5Mi4xNjguNDQuNToxMjU4MS8iLAogICAgIm1hY2hpbmVJZCI6ICIxNzlCN0VCNi1GRTBGLTQ2NDYtQTkwNy1EMUI4MEI3QzA4OEIiCn0=
 })
 </script>
 
