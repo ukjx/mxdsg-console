@@ -253,6 +253,7 @@ onMounted(() => {
   initSocket()
   intervalRunTime()
   // http://localhost:5173/#/?param=ewogICAgIndlYlNvY2tldFVybCI6ICJ3czovLzE5Mi4xNjguNDQuNToxMjU4MS8iLAogICAgIm1hY2hpbmVJZCI6ICIxNzlCN0VCNi1GRTBGLTQ2NDYtQTkwNy1EMUI4MEI3QzA4OEIiCn0=
+  // http://192.168.44.4:12580/#/?param=ewogICAgIndlYlNvY2tldFVybCI6ICJ3czovLzE5Mi4xNjguNDQuNToxMjU4MS8iLAogICAgIm1hY2hpbmVJZCI6ICIxNzlCN0VCNi1GRTBGLTQ2NDYtQTkwNy1EMUI4MEI3QzA4OEIiCn0=
 })
 </script>
 

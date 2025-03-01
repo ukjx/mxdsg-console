@@ -12,7 +12,7 @@
         </div>
         <div class="p-0 pt-0 mt-2">
           <div class="flex space-x-4 text-sm text-muted-foreground">
-            <div class="flex items-center break-all">
+            <div class="flex items-center break-words break-word-custom">
               <svg viewBox="0 0 15 15" width="1.2em" height="1.2em" class="mr-1 h-3 w-3 fill-sky-400 text-sky-400">
                 <path fill="currentColor" fill-rule="evenodd"
                       d="M.877 7.5a6.623 6.623 0 1 1 13.246 0a6.623 6.623 0 0 1-13.246 0M7.5 1.827a5.673 5.673 0 1 0 0 11.346a5.673 5.673 0 0 0 0-11.346"
@@ -95,5 +95,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-
+.break-word-custom {
+  word-break: break-word;
+}
 </style>
