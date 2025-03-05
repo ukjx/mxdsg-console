@@ -22,8 +22,11 @@
         <TabsContent value="setting">
           <Setting :configs="configs" @setConfig="setConfig"></Setting>
         </TabsContent>
-        <TabsContent value="Role">
-          <Role></Role>
+        <TabsContent value="role">
+          <Role :roles="roles" :roleConfig="roleConfig" :currentRole="configs.roleName"
+                :currentStatus="status"
+                :configs="configs" @sendMessage="sendMessage" @toast="showToast"
+          ></Role>
         </TabsContent>
         <TabsContent value="script">
           <Scripting :scripts="scripts" :currentScript="configs.scriptName" :currentStatus="status"
@@ -74,11 +77,12 @@ import {computed, onMounted, reactive, ref} from "vue"
 import {Configs} from '@/types/configs'
 import {Status} from "@/types/status.js";
 import {Logs} from "@/types/logs.js";
+import {RoleConfig} from "@/types/roleConfig.ts";
 import {v4 as uuid} from 'uuid'
 import {useRoute} from "vue-router";
 import {Toaster} from '@/components/ui/toast'
 import {useToast} from '@/components/ui/toast/use-toast'
-import {getTimeDifference} from "@/lib/utils.js";
+import {getTimeDifference} from "@/lib/times.ts";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -86,6 +90,7 @@ import {
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {Label} from "@/components/ui/label";
+import {taskNameData} from '@/lib/dataDictionary.ts';
 
 const {toast} = useToast()
 
@@ -104,6 +109,8 @@ const initSocket = function () {
     sendMessage('config', 'getConfigs')
     sendMessage('script', 'getScripts')
     sendMessage('program', 'getStatus')
+    sendMessage('role', 'getRoles')
+    sendMessage('role', 'getRoleConfig')
     // setConfig('ignoreSmallBlack', 'false')
   }
   ws.onmessage = function (event) {
@@ -129,6 +136,12 @@ const initSocket = function () {
       case 'loadScripts':
         scripts.value = msg.data;
         break
+      case 'loadRoles':
+        roles.value = msg.data.map((x: string) => x.replace(/\.txt$/, ''))
+        break
+      case 'loadRoleConfig':
+        roleConfig = {...msg.data};
+        break;
       case 'loadStatus':
         status.isRunning = Boolean(msg.data.isRunning)
         status.isRecord = Boolean(msg.data.isRecord)
@@ -176,6 +189,22 @@ let configs: Configs = reactive({
 })
 
 let scripts = ref<string[]>([]);
+let roles = ref<string[]>([]);
+let roleConfig: RoleConfig = reactive({
+  fixedPoint: '',
+  attack: '',
+  jump: '',
+  upJumpMode: '',
+  upJump: '',
+  forwardMode: '',
+  changeLine: '',
+  jumpDelay: '',
+  npc: '',
+  boss: '',
+  buffs: [],
+  attacks: []
+});
+
 let status: Status = reactive({
   isRunning: false,
   isRecord: false,
@@ -206,20 +235,8 @@ const showToast = (msg: string) => {
 const currentName = computed(() => {
   if (configs.taskName === 'execute')
     return configs.scriptName.replace(/\.txt$/, '')
-  else if (configs.taskName === 'darkKnight')
-    return '黑骑士'
-  else if (configs.taskName === 'phantom')
-    return '幻影'
-  else if (configs.taskName === 'paladin')
-    return '圣骑士'
-  else if (configs.taskName === 'wildHunter')
-    return '豹弩游侠'
-  else if (configs.taskName === 'demonSlayer')
-    return '恶魔猎手'
-  else if (configs.taskName === 'fixedPoint')
-    return '定点刷图'
   else
-    return configs.taskName
+    return taskNameData.get(configs.taskName)
 })
 const runStatus = computed(() => {
   return status.isRunning?'运行中':'未运行'

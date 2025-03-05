@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import {onMounted, onUnmounted, ref} from "vue";
 import {Logs} from "@/types/logs.ts";
-import {formatTime} from "@/lib/utils.ts";
+import {formatTime} from "@/lib/times.ts";
 import {AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogTitle} from "@/components/ui/alert-dialog";
 import {Label} from "@/components/ui/label";
 import {Toaster} from "@/components/ui/toast";

@@ -1,6 +1,6 @@
 <template>
 
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex items-center space-x-4 rounded-md border p-2 mb-1">
     <Lightbulb/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -13,26 +13,8 @@
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="execute">
-            录播刷图
-          </SelectItem>
-          <SelectItem value="fixedPoint">
-            定点刷图
-          </SelectItem>
-          <SelectItem value="darkKnight">
-            黑骑士
-          </SelectItem>
-          <SelectItem value="phantom">
-            幻影
-          </SelectItem>
-          <SelectItem value="paladin">
-            圣骑士
-          </SelectItem>
-          <SelectItem value="wildHunter">
-            豹弩游侠
-          </SelectItem>
-          <SelectItem value="demonSlayer">
-            恶魔猎手
+          <SelectItem v-for="item in taskNameData.keys()" :value="item">
+            {{ taskNameData.get(item) }}
           </SelectItem>
         </SelectGroup>
       </SelectContent>
@@ -156,14 +138,27 @@
 
 import {cn} from "@/lib/utils.ts";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
-import {Check, ChevronsUpDown, Lightbulb, ScrollText, MonitorCheck, MonitorPause, MonitorX, Fullscreen, Trash2, Videotape} from "lucide-vue-next";
+import {
+  Check,
+  ChevronsUpDown,
+  Lightbulb,
+  ScrollText,
+  MonitorCheck,
+  MonitorPause,
+  MonitorX,
+  Fullscreen,
+  Trash2,
+  Videotape,
+  // Target
+} from "lucide-vue-next";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
 import {AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
 import {Input} from '@/components/ui/input'
 import {computed, onMounted, ref} from 'vue'
-import {Status} from "@/types/status.ts";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {taskNameData} from '@/lib/dataDictionary.ts';
+import {Status} from "@/types/status.ts";
 import {Configs} from "@/types/configs.ts";
 
 const open = ref(false)
@@ -212,7 +207,6 @@ const scriptsObject = computed(() => {
 })
 
 const taskChange = (value: string) => {
-  console.log('taskChange', value)
   props.configs.taskName = value
   emit('sendMessage', 'config', 'setConfig', `taskName=${value}`)
 }

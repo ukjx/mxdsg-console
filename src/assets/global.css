@@ -1,0 +1,31 @@
+/* 自定义全局文件，用来重写样式 */
+
+/*去掉焦点黑色边框*/
+.focus-visible\:ring-offset-2:focus-visible {
+    --tw-ring-offset-width: 0px;
+}
+
+.focus-visible\:ring-ring:focus-visible {
+    --tw-ring-color: transparent;
+}
+
+.focus\:ring-offset-2:focus {
+    --tw-ring-offset-width: 2px;
+}
+
+.focus\:ring-ring:focus {
+    --tw-ring-color: transparent;
+}
+
+/*调整选择框大小*/
+button[role="combobox"] {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 2.2rem;
+}
+
+input[role="spinbutton"] {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 2.2rem;
+}

@@ -1,5 +1,6 @@
 <template>
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex items-center flex-wrap rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b border-t mt-1 pb-1">
     <BatteryLow/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -8,7 +9,7 @@
     </div>
     <Switch v-model:checked="configs.checkHpMp" @update:checked="changeConfig('checkHpMp', $event)"/>
   </div>
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
     <TrainFront/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -18,7 +19,7 @@
     <Switch v-model:checked="configs.ignoreSmallBlack" @update:checked="changeConfig('ignoreSmallBlack', $event)"/>
   </div>
 
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
     <Target/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -45,7 +46,7 @@
     </Select>
   </div>
 
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
     <Shuffle/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -69,7 +70,7 @@
     </Select>
   </div>
 
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
     <TrainFront/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -93,7 +94,7 @@
     </Select>
   </div>
 
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
     <LockKeyholeOpen/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -117,7 +118,7 @@
     </Select>
   </div>
 
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
     <Skull/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -144,7 +145,7 @@
     </Select>
   </div>
 
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
     <Clock1/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -164,7 +165,7 @@
     </NumberField>
   </div>
 
-  <div class="flex items-center space-x-4 rounded-md border p-4 mb-1">
+  <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
     <PersonStanding/>
     <div class="flex-1 space-y-1">
       <p class="text-sm font-medium leading-none">
@@ -182,6 +183,7 @@
         <NumberFieldIncrement/>
       </NumberFieldContent>
     </NumberField>
+  </div>
   </div>
 
 </template>
