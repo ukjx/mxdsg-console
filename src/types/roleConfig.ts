@@ -6,11 +6,14 @@ export interface RoleConfig {
     jump: string;
     upJumpMode: string;
     upJump: string;
+    teleport: string;
     forwardMode: string;
     changeLine: string;
     jumpDelay: string;
     npc: string;
     boss: string;
+    guide: string;
+    guideStep: string;
     buffs: KeyUnit[];
     attacks: KeyUnit[];
 }

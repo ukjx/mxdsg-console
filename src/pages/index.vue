@@ -196,11 +196,14 @@ let roleConfig: RoleConfig = reactive({
   jump: '',
   upJumpMode: '',
   upJump: '',
+  teleport: '',
   forwardMode: '',
   changeLine: '',
   jumpDelay: '',
   npc: '',
   boss: '',
+  guide: '',
+  guideStep: '',
   buffs: [],
   attacks: []
 });

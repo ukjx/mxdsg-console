@@ -68,7 +68,7 @@
       <MonitorPause class="mr-2 h-4 w-4"/>
       停止任务(F9)
     </Button>
-    <Button class="ml-1 bg-black" @click="sendMessage('program', 'exit')">
+    <Button class="ml-1" variant="default" @click="sendMessage('program', 'exit')">
       <MonitorX class="mr-2 h-4 w-4"/>
       退出程序(F10)
     </Button>

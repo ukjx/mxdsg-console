@@ -1,6 +1,6 @@
 export interface KeyUnit {
     text: string,
     key: string,
-    second: number,
+    second: number | undefined,
     mark: string
 }
