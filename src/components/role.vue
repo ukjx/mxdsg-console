@@ -222,21 +222,22 @@
         <p class="w-20 text-[0.850rem] font-medium leading-none">
           向导步骤
         </p>
-        <Input readonly type="text" placeholder="快速移动序号,传送口方向和序号" v-model="roleConfig.guideStep"/>
+        <Input type="text" placeholder="快速移动序号,传送口方向和序号" v-model="roleConfig.guideStep" @update:modelValue="selectChange('向导步骤', 'guideStep', $event)" />
       </div>
 
       <div class="w-full flex items-center mb-1">
         <p class="w-20 text-[0.850rem] font-medium leading-none">
           跳跃延迟
         </p>
-        <Input readonly type="text" placeholder="上跳,下跳,二段跳" v-model="roleConfig.jumpDelay"/>
+        <Input type="text" placeholder="上跳,下跳,二段跳" v-model="roleConfig.jumpDelay" @update:modelValue="selectChange('跳跃延迟', 'jumpDelay', $event)" />
       </div>
 
       <div class="w-full flex items-center mb-1">
         <p class="w-20 text-[0.850rem] font-medium leading-none">
           地图定点
         </p>
-        <Textarea readonly placeholder="坐标系组X,Y" v-model="roleConfig.fixedPoint"/>
+        <Textarea class="w-10/12 rounded-r-none border-r-0" placeholder="坐标系组X,Y" v-model="roleConfig.fixedPoint" @update:modelValue="selectChange('地图定点', 'fixedPoint', $event)" />
+        <Button variant="outline" class="w-2/12 min-h-[60px] py-2 rounded-l-none" @click="copyText(roleConfig.fixedPoint)">复制</Button>
       </div>
 
       <div class="w-full flex flex-wrap items-center mb-1">
@@ -275,11 +276,11 @@
         <AlertDialogDescription></AlertDialogDescription>
       </AlertDialogHeader>
       <div class="flex flex-wrap items-center m-1">
-        <div class="w-full flex items-center mb-1">
+        <div class="w-full flex flex-wrap items-center mb-1">
           <p class="w-10 text-[0.850rem] font-medium leading-none mr-2">
             按键
           </p>
-          <Select :model-value="keyUnitForm.key" @update:modelValue="keyUnitForm.key=$event">
+          <Select :model-value="keyUnitForm.key" @update:modelValue="keyUnitForm.key=$event;keyUnitForm.valid()">
             <SelectTrigger class="flex-1">
               <SelectValue placeholder="未选择"/>
             </SelectTrigger>
@@ -291,18 +292,21 @@
               </SelectGroup>
             </SelectContent>
           </Select>
+          <p v-if="keyUnitForm.keyWarn" class="w-full mt-1 ml-12 text-sm text-red-500">* {{keyUnitForm.keyWarn}}</p>
         </div>
-        <div class="w-full flex items-center mb-1">
-          <p class="w-12 text-[0.850rem] font-medium leading-none mr-2">
+        <div class="w-full flex flex-wrap items-center mb-1">
+          <p class="w-10 text-[0.850rem] font-medium leading-none mr-2">
             秒数
           </p>
-          <Input type="number" v-model="keyUnitForm.second" placeholder="间隔秒数" />
+          <Input class="flex-1" type="number" v-model="keyUnitForm.second" @update:modelValue="keyUnitForm.valid" placeholder="间隔秒数" />
+          <p v-if="keyUnitForm.secondWarn" class="w-full mt-1 ml-12 text-sm text-red-500">* {{keyUnitForm.secondWarn}}</p>
         </div>
-        <div class="w-full flex items-center mb-1">
-          <p class="w-12 text-[0.850rem] font-medium leading-none mr-2">
+        <div class="w-full flex flex-wrap items-center mb-1">
+          <p class="w-10 text-[0.850rem] font-medium leading-none mr-2">
             说明
           </p>
-          <Input type="text" v-model="keyUnitForm.mark" placeholder="按键说明" />
+          <Input class="flex-1" type="text" v-model="keyUnitForm.mark" @update:modelValue="keyUnitForm.valid" placeholder="按键说明" />
+          <p v-if="keyUnitForm.markWarn" class="w-full mt-1 ml-12 text-sm text-red-500">* {{keyUnitForm.markWarn}}</p>
         </div>
       </div>
       <AlertDialogFooter>
@@ -349,22 +353,11 @@ import {
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {KeyUnit} from "@/types/keyUnit.ts";
+import {$} from "@/lib/common.ts";
 
 const props = defineProps<{ roles: string[], roleConfig: RoleConfig, currentRole: string, currentStatus: Status, configs: Configs }>()
 
 type RoleConfigKey = keyof RoleConfig;
-
-// const confirm = reactive({
-//   isOpen: false,
-//   text: '',
-//   dataName: '',
-//   delete: () => {
-//     confirm.isOpen = false
-//     console.log(confirm.dataName)
-//     // let data = `${name}|delete|-1`
-//     // emit('sendMessage', 'role','setRoleConfig', data)
-//   }
-// })
 
 const keyUnitForm = reactive({
   isOpen: false,
@@ -374,7 +367,11 @@ const keyUnitForm = reactive({
   key: '',
   second: '',
   mark: '',
+  keyWarn: '',
+  secondWarn: '',
+  markWarn: '',
   add: (name: string) => {
+    keyUnitForm.clear()
     keyUnitForm.name = name
     keyUnitForm.groupNo = 0
     keyUnitForm.text = ''
@@ -384,6 +381,7 @@ const keyUnitForm = reactive({
     keyUnitForm.isOpen = true
   },
   edit: (name: string, index: number, keyUnit: KeyUnit) => {
+    keyUnitForm.clear()
     keyUnitForm.name = name
     keyUnitForm.groupNo = index + 1
     keyUnitForm.text = keyUnit.text
@@ -393,9 +391,33 @@ const keyUnitForm = reactive({
     keyUnitForm.isOpen = true
   },
   save: () => {
-    let value = `${keyUnitForm.key},${keyUnitForm.second},${keyUnitForm.mark}`
-    setRoleConfig(keyUnitForm.name, value, keyUnitForm.groupNo)
-    keyUnitForm.close()
+    if (keyUnitForm.valid()) {
+      let value = `${keyUnitForm.key},${keyUnitForm.second},${keyUnitForm.mark}`
+      setRoleConfig(keyUnitForm.name, value, keyUnitForm.groupNo)
+      keyUnitForm.close()
+    }
+  },
+  valid: () => {
+    console.log('valid')
+    keyUnitForm.keyWarn = $.isEmpty(keyUnitForm.key) ? '请选择按键' : keyUnitForm.repeat()
+    keyUnitForm.secondWarn = $.isEmpty(keyUnitForm.second) ? '请输入秒数' :
+        (!$.isPositiveInteger(keyUnitForm.second) ? '请输入数字秒数' : '')
+    keyUnitForm.markWarn = $.isEmpty(keyUnitForm.mark) ? '请输入说明' : ''
+    return keyUnitForm.keyWarn == '' && keyUnitForm.secondWarn == '' && keyUnitForm.markWarn == ''
+  },
+  clear: () => {
+    keyUnitForm.keyWarn = ''
+    keyUnitForm.secondWarn = ''
+    keyUnitForm.markWarn = ''
+  },
+  repeat: () => {
+    let key: RoleConfigKey = keyUnitForm.name == '增益组' ? 'buffs':'attacks'
+    for (let item of props.roleConfig[key]) {
+        if (item.key == keyUnitForm.key) {
+        return '按键重复'
+      }
+    }
+    return ''
   },
   close: () => {
     keyUnitForm.isOpen = false
@@ -441,6 +463,11 @@ const setRoleConfig = (name: string, value: string, groupNo: number) => {
 const selectChange = (name: string, key: RoleConfigKey, value: any) => {
   props.roleConfig[key] = value
   setRoleConfig(name, value, 0);
+}
+
+const copyText = (text: string) => {
+  navigator.clipboard.writeText(text)
+  emit('toast', '复制完成')
 }
 
 onMounted(() => {
