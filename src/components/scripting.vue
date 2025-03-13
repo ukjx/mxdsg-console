@@ -82,7 +82,7 @@
       <MonitorPause class="mr-2 h-4 w-4"/>
       停止任务(F9)
     </Button>
-    <Button class="ml-1" variant="outline" @click="sendMessage('program', 'exit')">
+    <Button class="ml-1" variant="outline" @click="openExit = true">
       <MonitorX class="mr-2 h-4 w-4"/>
       退出程序(F10)
     </Button>
@@ -155,6 +155,21 @@
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
+
+  <AlertDialog v-model:open="openExit">
+    <AlertDialogContent class="top-1/2" @openAutoFocus="(e)=>e.preventDefault()" @closeAutoFocus="(e)=>e.preventDefault()">
+      <AlertDialogHeader>
+        <AlertDialogTitle>提示</AlertDialogTitle>
+        <AlertDialogDescription>确定要退出程序吗？</AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <div class="w-full flex items-center">
+          <Button class="w-1/2 rounded-r-none border-r-0" variant="outline" @click="sendMessage('program', 'exit');openExit = false">确定</Button>
+          <Button class="w-1/2 rounded-l-none" variant="outline" @click="openExit = false">取消</Button>
+        </div>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>
 
 <script setup lang="ts">
@@ -203,6 +218,7 @@ const isRecord = ref(false)
 const deleteDialog = ref(false)
 const saveScriptDialog = ref(false)
 const scriptName = ref('')
+const openExit = ref(false)
 
 const taskTooltip = ref(false)
 const triggerTaskTooltip = () => {
