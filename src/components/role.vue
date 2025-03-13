@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-wrap items-center rounded-md border p-4 mb-1">
+  <div ref="formRef" class="flex flex-wrap items-center rounded-md border p-4 mb-1">
 
     <div class="flex w-full items-center mb-2">
       <ScrollText/>
-      <div class="flex-1 space-y-1">
+      <div class="w-16 space-y-1 ml-2">
         <p class="text-sm font-medium leading-none">
           选择角色
         </p>
@@ -20,6 +20,7 @@
           </SelectGroup>
         </SelectContent>
       </Select>
+      <Button class="ml-2" @click="roleAdd.open" variant="outline">新增</Button>
     </div>
 
     <div class="flex w-full flex-wrap items-center mb-2">
@@ -333,6 +334,30 @@
 </AlertDialogContent>
 </AlertDialog>
 
+  <AlertDialog v-model:open="roleAdd.isOpen">
+    <AlertDialogContent class="top-1/2" @openAutoFocus="(e)=>e.preventDefault()" @closeAutoFocus="(e)=>e.preventDefault()">
+      <AlertDialogHeader>
+        <AlertDialogTitle>新增角色</AlertDialogTitle>
+        <AlertDialogDescription></AlertDialogDescription>
+      </AlertDialogHeader>
+      <div class="flex flex-wrap items-center m-1">
+        <div class="w-full flex flex-wrap items-center mb-1">
+          <p class="w-10 text-[0.850rem] font-medium leading-none mr-2">
+            角色
+          </p>
+          <Input class="flex-1" type="text" v-model="roleAdd.roleName" @update:modelValue="roleAdd.valid" placeholder="角色名称" />
+          <p v-if="roleAdd.roleNameWarn" class="w-full mt-1 ml-12 text-sm text-red-500">* {{roleAdd.roleNameWarn}}</p>
+        </div>
+      </div>
+      <AlertDialogFooter>
+        <div class="w-full flex items-center">
+          <Button class="w-1/2 rounded-r-none border-r-0" variant="outline" @click="roleAdd.save">保存</Button>
+          <Button class="w-1/2 rounded-l-none" variant="outline" @click="roleAdd.close">取消</Button>
+        </div>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+
 </template>
 
 <script setup lang="ts">
@@ -343,7 +368,7 @@ import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVal
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {onMounted, reactive} from "vue";
+import {onMounted, onUnmounted, reactive, ref, watch} from "vue";
 import {RoleConfig} from "@/types/roleConfig.ts";
 import {Status} from "@/types/status.ts";
 import {Configs} from "@/types/configs.ts";
@@ -356,6 +381,7 @@ import {KeyUnit} from "@/types/keyUnit.ts";
 import {$} from "@/lib/common.ts";
 
 const props = defineProps<{ roles: string[], roleConfig: RoleConfig, currentRole: string, currentStatus: Status, configs: Configs }>()
+const formRef = ref<HTMLElement | null>(null)
 
 type RoleConfigKey = keyof RoleConfig;
 
@@ -398,7 +424,6 @@ const keyUnitForm = reactive({
     }
   },
   valid: () => {
-    console.log('valid')
     keyUnitForm.keyWarn = $.isEmpty(keyUnitForm.key) ? '请选择按键' : keyUnitForm.repeat()
     keyUnitForm.secondWarn = $.isEmpty(keyUnitForm.second) ? '请输入秒数' :
         (!$.isPositiveInteger(keyUnitForm.second) ? '请输入数字秒数' : '')
@@ -411,9 +436,10 @@ const keyUnitForm = reactive({
     keyUnitForm.markWarn = ''
   },
   repeat: () => {
+    let idx = keyUnitForm.groupNo - 1
     let key: RoleConfigKey = keyUnitForm.name == '增益组' ? 'buffs':'attacks'
-    for (let item of props.roleConfig[key]) {
-        if (item.key == keyUnitForm.key) {
+    for (let [index, item] of props.roleConfig[key].entries()) {
+        if (index != idx && item.key == keyUnitForm.key) {
         return '按键重复'
       }
     }
@@ -449,6 +475,35 @@ const keyUnitDelete = reactive({
   }
 })
 
+const roleAdd = reactive({
+  isOpen: false,
+  roleName: '',
+  roleNameWarn: '',
+  open: () => {
+    roleAdd.isOpen = true
+  },
+  save: () => {
+    if (roleAdd.valid()) {
+      console.log(roleAdd.roleName)
+      emit('sendMessage', 'role', 'addRole', roleAdd.roleName)
+      roleAdd.close()
+    }
+  },
+  valid: () => {
+    if ($.isEmpty(roleAdd.roleName)) {
+      roleAdd.roleNameWarn = '角色名称不能为空'
+    } else if(props.roles.indexOf(roleAdd.roleName) >= 0) {
+        roleAdd.roleNameWarn = '角色名称已存在'
+    } else {
+      roleAdd.roleNameWarn = ''
+    }
+    return roleAdd.roleNameWarn == ''
+  },
+  close: () => {
+    roleAdd.isOpen = false
+  }
+})
+
 const roleChange = (value: string) => {
   props.configs.roleName = value
   emit('sendMessage', 'role', 'setRoleName', value)
@@ -457,7 +512,7 @@ const roleChange = (value: string) => {
 const setRoleConfig = (name: string, value: string, groupNo: number) => {
   let data = `${name}|${value}|${groupNo}`
   console.log(data)
-  // emit('sendMessage', 'role','setRoleConfig', data)
+  emit('sendMessage', 'role','setRoleConfig', data)
 }
 
 const selectChange = (name: string, key: RoleConfigKey, value: any) => {
@@ -470,15 +525,42 @@ const copyText = (text: string) => {
   emit('toast', '复制完成')
 }
 
+watch(() => props.currentStatus.isRunning, (isRunning) => {
+  toggleControlStatus(isRunning)
+});
+
+function toggleControlStatus(isRunning: boolean) {
+  if (!formRef.value) return
+  const controls = formRef.value.querySelectorAll('input,textarea,select,button');
+  controls.forEach((item) => {
+    const element = item as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLButtonElement;
+    element.disabled = isRunning
+    element.style.pointerEvents = isRunning ? 'none' : 'auto'
+  })
+}
+
+const handleFormClick = (event: MouseEvent) => {
+  const target = event.target as HTMLElement;
+  if (target.querySelectorAll('input,textarea,select,button').length > 0) {
+    if (props.currentStatus.isRunning) {
+      emit('toast', '停止任务后才能修改')
+    }
+  }
+};
+
 onMounted(() => {
+  toggleControlStatus(props.currentStatus.isRunning)
+  if (!formRef.value) return
+  formRef.value.addEventListener('click', handleFormClick);
+})
+
+onUnmounted(() => {
+  if (!formRef.value) return
+  formRef.value.removeEventListener('click', handleFormClick);
 })
 
 const emit = defineEmits(['sendMessage', 'toast'])
 </script>
 
 <style scoped>
-button {
-  /* 确保没有设置 pointer-events: none; */
-  pointer-events: auto;
-}
 </style>

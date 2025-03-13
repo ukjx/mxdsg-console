@@ -140,7 +140,7 @@ const initSocket = function () {
         roles.value = msg.data.map((x: string) => x.replace(/\.txt$/, ''))
         break
       case 'loadRoleConfig':
-        roleConfig = {...msg.data};
+          Object.assign(roleConfig, msg.data);
         break;
       case 'loadStatus':
         status.isRunning = Boolean(msg.data.isRunning)

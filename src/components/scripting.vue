@@ -1,5 +1,4 @@
 <template>
-
   <div class="flex items-center space-x-4 rounded-md border p-2 mb-1">
     <Lightbulb/>
     <div class="flex-1 space-y-1">
@@ -7,18 +6,33 @@
         执行任务
       </p>
     </div>
-    <Select :modelValue="configs.taskName" @update:modelValue="taskChange">
-      <SelectTrigger class="flex-1">
-        <SelectValue placeholder="未选择"/>
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectItem v-for="item in taskNameData.keys()" :value="item">
-            {{ taskNameData.get(item) }}
-          </SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <TooltipProvider>
+      <Tooltip :open="taskTooltip">
+        <TooltipTrigger class="w-1/2">
+          <button v-if="disabled" @mousedown="triggerTaskTooltip" class="flex h-[2.2rem] w-full items-center justify-between rounded-md border border-input bg-background px-3 text-sm ring-offset-background cursor-not-allowed opacity-50 text-start flex-1">
+            {{taskNameData.get(configs.taskName)}}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon w-4 h-4 opacity-50 shrink-0" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+          </button>
+          <div v-else class="w-full">
+            <Select :modelValue="configs.taskName" @update:modelValue="taskChange" :disabled="disabled">
+              <SelectTrigger class="flex-1">
+                <SelectValue placeholder="未选择"/>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem v-for="item in taskNameData.keys()" :value="item">
+                    {{ taskNameData.get(item) }}
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>停止任务后才能修改</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   </div>
 
   <div v-if="configs.taskName == 'execute'" class="flex items-center space-x-4 rounded-md border p-4 mb-1">
@@ -50,7 +64,7 @@
               }"
               >
                 {{ item.label }}
-                <Check :class="cn( 'ml-auto h-4 w-4', currentScript === item.value ? 'opacity-100' : 'opacity-0', )" />
+                <Check :class="cn( 'ml-auto h-4 w-4', currentScript === item.value ? 'opacity-100' : 'opacity-0', )"/>
               </CommandItem>
             </CommandGroup>
           </CommandList>
@@ -68,7 +82,7 @@
       <MonitorPause class="mr-2 h-4 w-4"/>
       停止任务(F9)
     </Button>
-    <Button class="ml-1" variant="default" @click="sendMessage('program', 'exit')">
+    <Button class="ml-1" variant="outline" @click="sendMessage('program', 'exit')">
       <MonitorX class="mr-2 h-4 w-4"/>
       退出程序(F10)
     </Button>
@@ -89,14 +103,23 @@
     </Button>
   </div>
 
-  <Button v-if="configs.taskName == 'fixedPoint' && !currentStatus.isRecord" @click="beginRecord" class="w-full mt-2 bg-lime-500">
-    <Videotape class="mr-2 h-4 w-4"/>
-    开始录制
-  </Button>
-  <Button v-if="configs.taskName == 'fixedPoint' && currentStatus.isRecord" @click="endRecord" class="w-full mt-2 bg-emerald-600">
-    <Videotape class="mr-2 h-4 w-4"/>
-    停止录制
-  </Button>
+  <TooltipProvider>
+    <Tooltip :open="recordTooltip">
+      <TooltipTrigger v-if="configs.taskName == 'fixedPoint'" class="w-full">
+        <div @mousedown="triggerRecordTooltip">
+          <Button v-if="configs.taskName == 'fixedPoint' && !currentStatus.isRecord" :disabled="disabled" @click="beginRecord" class="w-full mt-2 bg-lime-500">
+            <Videotape class="mr-2 h-4 w-4"/> 开始录制
+          </Button>
+          <Button v-if="configs.taskName == 'fixedPoint' && currentStatus.isRecord" :disabled="disabled" @click="endRecord" class="w-full mt-2 bg-emerald-600">
+            <Videotape class="mr-2 h-4 w-4"/> 停止录制
+          </Button>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>停止任务后才能录制</p>
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
 
   <Button class="w-full mt-2 bg-teal-600" @click="sendMessage('program', 'screenshot')">
     <Fullscreen class="mr-2 h-4 w-4"/>
@@ -135,9 +158,14 @@
 </template>
 
 <script setup lang="ts">
-
 import {cn} from "@/lib/utils.ts";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 import {
   Check,
   ChevronsUpDown,
@@ -153,7 +181,16 @@ import {
 } from "lucide-vue-next";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
-import {AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 import {Input} from '@/components/ui/input'
 import {computed, onMounted, ref} from 'vue'
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
@@ -166,6 +203,24 @@ const isRecord = ref(false)
 const deleteDialog = ref(false)
 const saveScriptDialog = ref(false)
 const scriptName = ref('')
+
+const taskTooltip = ref(false)
+const triggerTaskTooltip = () => {
+  if (!disabled) return
+  taskTooltip.value = true
+  setTimeout(() => {
+    taskTooltip.value = false
+  }, 1500)
+}
+
+const recordTooltip = ref(false)
+const triggerRecordTooltip = () => {
+  if (!disabled) return
+  recordTooltip.value = true
+  setTimeout(() => {
+    recordTooltip.value = false
+  }, 1500)
+}
 
 const deleteScript = () => {
   emit('sendMessage', 'deleteScript', props.currentScript);
@@ -210,6 +265,10 @@ const taskChange = (value: string) => {
   props.configs.taskName = value
   emit('sendMessage', 'config', 'setConfig', `taskName=${value}`)
 }
+
+const disabled = computed(() => {
+  return props.currentStatus.isRunning
+})
 
 onMounted(() => {
 })

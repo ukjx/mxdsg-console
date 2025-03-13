@@ -1,19 +1,22 @@
 /* 自定义全局文件，用来重写样式 */
 
-/*去掉焦点黑色边框*/
-.focus-visible\:ring-offset-2:focus-visible {
+/* 通用的焦点样式重置 */
+*:focus,
+*:focus-visible {
+    outline: none;
+    --tw-ring-color: transparent;
     --tw-ring-offset-width: 0px;
 }
 
-.focus-visible\:ring-ring:focus-visible {
+/* 简化重复规则 */
+.focus\:ring-offset-2:focus,
+.focus-visible\:ring-offset-2:focus-visible {
+    --tw-ring-offset-width: 0px;
     --tw-ring-color: transparent;
 }
 
-.focus\:ring-offset-2:focus {
-    --tw-ring-offset-width: 2px;
-}
-
-.focus\:ring-ring:focus {
+.focus\:ring-ring:focus,
+.focus-visible\:ring-ring:focus-visible {
     --tw-ring-color: transparent;
 }
 
