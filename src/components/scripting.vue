@@ -28,7 +28,7 @@
             </Select>
           </div>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent side="left">
           <p>停止任务后才能修改</p>
         </TooltipContent>
       </Tooltip>
@@ -115,7 +115,7 @@
           </Button>
         </div>
       </TooltipTrigger>
-      <TooltipContent>
+      <TooltipContent side="bottom">
         <p>停止任务后才能录制</p>
       </TooltipContent>
     </Tooltip>

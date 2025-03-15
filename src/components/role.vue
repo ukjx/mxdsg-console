@@ -23,7 +23,45 @@
       <Button class="ml-2" @click="roleAdd.open" variant="outline">新增</Button>
     </div>
 
+
     <div class="flex w-full flex-wrap items-center mb-2">
+
+      <div class="w-1/2 flex items-center mb-1">
+        <p class="w-16 text-[0.850rem] font-medium leading-none mr-2">
+          补血键
+        </p>
+        <Select :modelValue="roleConfig.hpKey" @update:modelValue="selectChange('补血键', 'hpKey', $event)">
+          <SelectTrigger class="flex-1">
+            <SelectValue placeholder="未选择"/>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem v-for="item in keyData.keys()" :value="item">
+                {{ keyData.get(item) }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div class="w-1/2 flex items-center mb-1">
+        <p class="text-[0.850rem] font-medium leading-none mx-2">
+          补魔键
+        </p>
+        <Select :modelValue="roleConfig.mpKey" @update:modelValue="selectChange('补魔键', 'mpKey', $event)">
+          <SelectTrigger class="flex-1">
+            <SelectValue placeholder="未选择"/>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem v-for="item in keyData.keys()" :value="item">
+                {{ keyData.get(item) }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div class="w-1/2 flex items-center mb-1">
         <p class="text-[0.850rem] font-medium leading-none mr-2">
           主攻按键
@@ -124,13 +162,19 @@
               <SelectItem :value="'瞬移'">
                 瞬移
               </SelectItem>
+              <SelectItem :value="'三段跳'">
+                三段跳
+              </SelectItem>
+              <SelectItem :value="'二瞬移'">
+                二瞬移
+              </SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
 
       <div class="w-1/2 flex items-center mb-1">
-        <p class="text-[0.850rem] font-medium leading-none mx-2">
+        <p class="w-14 text-[0.850rem] font-medium leading-none mx-2">
           瞬移键
         </p>
         <Select :modelValue="roleConfig.teleport" @update:modelValue="selectChange('瞬移键', 'teleport', $event)">
@@ -219,6 +263,36 @@
         </Select>
       </div>
 
+      <div class="w-1/2 flex items-center mb-1">
+        <p class="w-16 text-[0.850rem] font-medium leading-none mr-2">
+          护身符
+        </p>
+        <Select :modelValue="roleConfig.amulet" @update:modelValue="selectChange('护身符', 'amulet', $event)">
+          <SelectTrigger class="flex-1">
+            <SelectValue placeholder="未选择"/>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem v-for="item in keyData.keys()" :value="item">
+                {{ keyData.get(item) }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div class="w-1/2 flex items-center mb-1">
+        <p class="text-[0.850rem] font-medium leading-none mx-2">
+          前进次数
+        </p>
+        <NumberField class="flex-1" id="second" :modelValue="roleConfig.forwardCount" :min="1"
+                     @update:modelValue="selectChange('前进次数', 'forwardCount', $event)">
+          <NumberFieldContent>
+            <NumberFieldInput/>
+          </NumberFieldContent>
+        </NumberField>
+      </div>
+
       <div class="w-full flex items-center mb-1">
         <p class="w-20 text-[0.850rem] font-medium leading-none">
           向导步骤
@@ -231,6 +305,13 @@
           跳跃延迟
         </p>
         <Input type="text" placeholder="上跳,下跳,二段跳" v-model="roleConfig.jumpDelay" @update:modelValue="selectChange('跳跃延迟', 'jumpDelay', $event)" />
+      </div>
+
+      <div class="w-full flex items-center mb-1">
+        <p class="w-20 text-[0.850rem] font-medium leading-none">
+          定点偏差
+        </p>
+        <Input type="text" placeholder="偏差值:x,y" v-model="roleConfig.offset" @update:modelValue="selectChange('定点偏差', 'offset', $event)" />
       </div>
 
       <div class="w-full flex items-center mb-1">
@@ -379,6 +460,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import {KeyUnit} from "@/types/keyUnit.ts";
 import {$} from "@/lib/common.ts";
+import {
+  NumberField,
+  NumberFieldContent,
+  NumberFieldInput
+} from "@/components/ui/number-field";
 
 const props = defineProps<{ roles: string[], roleConfig: RoleConfig, currentRole: string, currentStatus: Status, configs: Configs }>()
 const formRef = ref<HTMLElement | null>(null)
@@ -516,8 +602,9 @@ const setRoleConfig = (name: string, value: string, groupNo: number) => {
 }
 
 const selectChange = (name: string, key: RoleConfigKey, value: any) => {
-  props.roleConfig[key] = value
-  setRoleConfig(name, value, 0);
+  // props.roleConfig[key] = value as RoleConfig[RoleConfigKey]
+  Object.assign(props.roleConfig, { [key]: value });
+  setRoleConfig(name, value, 0)
 }
 
 const copyText = (text: string) => {

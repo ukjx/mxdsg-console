@@ -120,18 +120,12 @@ const initSocket = function () {
     switch (msg.action) {
       case 'loadConfigs':
         let item = msg.data;
-        configs.checkHpMp = item.checkHpMp.toLowerCase() === 'true'
-        configs.ignoreSmallBlack = item.ignoreSmallBlack.toLowerCase() === 'true'
-        configs.mushroomHandle = item.mushroomHandle
-        configs.offlineHandle = item.offlineHandle
-        configs.smallBlackHandle = item.smallBlackHandle
-        configs.runeHandle = item.runeHandle
-        configs.deathHandle = item.deathHandle
-        configs.changeLineInterval = parseInt(item.changeLineInterval)
-        configs.someoneSecond = parseInt(item.someoneSecond)
-        configs.taskName = item.taskName
-        configs.scriptName = item.scriptName
-        configs.roleName = item.roleName
+        item.weChatNotice = item.weChatNotice.toLowerCase() === 'true'
+        item.checkHp = item.checkHp.toLowerCase() === 'true'
+        item.checkMp = item.checkMp.toLowerCase() === 'true'
+        item.changeLineInterval = parseInt(item.changeLineInterval)
+        item.someoneSecond = parseInt(item.someoneSecond)
+        Object.assign(configs, item);
         break
       case 'loadScripts':
         scripts.value = msg.data;
@@ -140,6 +134,7 @@ const initSocket = function () {
         roles.value = msg.data.map((x: string) => x.replace(/\.txt$/, ''))
         break
       case 'loadRoleConfig':
+          msg.data.forwardCount = parseInt(msg.data.forwardCount)
           Object.assign(roleConfig, msg.data);
         break;
       case 'loadStatus':
@@ -174,11 +169,13 @@ const initSocket = function () {
 }
 
 let configs: Configs = reactive({
-  checkHpMp: false,
-  ignoreSmallBlack: false,
-  mushroomHandle: '',
-  offlineHandle: '',
+  weChatNotice: false,
+  checkHp: false,
+  checkMp: false,
   smallBlackHandle: '',
+  mushroomHandle: '',
+  newTesterHandle: '',
+  offlineHandle: '',
   runeHandle: '',
   deathHandle: '',
   changeLineInterval: 0,
@@ -191,19 +188,24 @@ let configs: Configs = reactive({
 let scripts = ref<string[]>([]);
 let roles = ref<string[]>([]);
 let roleConfig: RoleConfig = reactive({
+  hpKey: '',
+  mpKey: '',
   fixedPoint: '',
+  offset: '',
   attack: '',
   jump: '',
   upJumpMode: '',
   upJump: '',
   teleport: '',
   forwardMode: '',
+  forwardCount: 1,
   changeLine: '',
   jumpDelay: '',
   npc: '',
   boss: '',
   guide: '',
   guideStep: '',
+  amulet: '',
   buffs: [],
   attacks: []
 });
