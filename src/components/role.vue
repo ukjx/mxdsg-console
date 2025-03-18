@@ -304,7 +304,7 @@
         <p class="w-20 text-[0.850rem] font-medium leading-none">
           跳跃延迟
         </p>
-        <Input type="text" placeholder="上跳,下跳,二段跳" v-model="roleConfig.jumpDelay" @update:modelValue="selectChange('跳跃延迟', 'jumpDelay', $event)" />
+        <Input type="text" placeholder="上跳,下跳,主攻后" v-model="roleConfig.jumpDelay" @update:modelValue="selectChange('跳跃延迟', 'jumpDelay', $event)" />
       </div>
 
       <div class="w-full flex items-center mb-1">
@@ -320,6 +320,13 @@
         </p>
         <Textarea class="w-10/12 rounded-r-none border-r-0" placeholder="坐标系组X,Y" v-model="roleConfig.fixedPoint" @update:modelValue="selectChange('地图定点', 'fixedPoint', $event)" />
         <Button variant="outline" class="w-2/12 min-h-[60px] py-2 rounded-l-none" @click="copyText(roleConfig.fixedPoint)">复制</Button>
+      </div>
+
+      <div class="w-full flex items-center mb-1">
+        <p class="w-20 text-[0.850rem] font-medium leading-none">
+          日常任务
+        </p>
+        <Textarea class="w-full rounded-r-none border-r-0 h-24" placeholder="参考：引路1》刷图120秒》引路2》刷图240秒》引路3》引路4，左下》切换定点刷图》通知" v-model="roleConfig.dailyTask" @update:modelValue="selectChange('日常任务', 'dailyTask', $event)" />
       </div>
 
       <div class="w-full flex flex-wrap items-center mb-1">

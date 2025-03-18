@@ -19,6 +19,7 @@ export interface RoleConfig {
     guide: string;
     guideStep: string;
     amulet: string;
+    dailyTask: string;
     buffs: KeyUnit[];
     attacks: KeyUnit[];
 }

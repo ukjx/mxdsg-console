@@ -1,5 +1,7 @@
 const taskNameData = new Map<string, string>([
     ['fixedPoint', '定点刷图'],
+    ['range', '范围刷图'],
+    ['daily', '日常任务'],
     ['darkKnight', '黑骑士'],
     ['phantom', '幻影'],
     // ['wildHunter', '豹弩游侠'],

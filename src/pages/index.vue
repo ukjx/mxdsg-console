@@ -155,6 +155,9 @@ const initSocket = function () {
       case 'toast':
         toast({ title: '提示', description: msg.data, duration: 1000 })
         break;
+    case 'debug':
+      console.log(msg.data)
+      break;
     }
   }
   ws.onerror = function (event) {
@@ -206,6 +209,7 @@ let roleConfig: RoleConfig = reactive({
   guide: '',
   guideStep: '',
   amulet: '',
+  dailyTask: '',
   buffs: [],
   attacks: []
 });
