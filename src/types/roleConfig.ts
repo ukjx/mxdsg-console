@@ -22,4 +22,5 @@ export interface RoleConfig {
     dailyTask: string;
     buffs: KeyUnit[];
     attacks: KeyUnit[];
+    options: KeyUnit[];
 }

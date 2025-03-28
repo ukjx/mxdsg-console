@@ -295,7 +295,7 @@
 
       <div class="w-full flex items-center mb-1">
         <p class="w-20 text-[0.850rem] font-medium leading-none">
-          向导步骤
+          复活向导
         </p>
         <Input type="text" placeholder="快速移动序号,传送口方向和序号" v-model="roleConfig.guideStep" @update:modelValue="selectChange('向导步骤', 'guideStep', $event)" />
       </div>
@@ -330,12 +330,12 @@
       </div>
 
       <div class="w-full flex flex-wrap items-center mb-1">
-        <p class="w-full text-[0.850rem] font-medium leading-none">
+        <p class="w-full text-[0.850rem] font-medium leading-none mt-2 mb-1">
           增益组
         </p>
         <template v-for="(item, index) in roleConfig.buffs">
           <div class="w-full flex mt-1 items-center overflow-auto">
-            <Input class="w-10/12 rounded-r-none border-r-0" readonly type="text" @click="keyUnitForm.edit('增益组', index, item)" :data-index="index" v-model="item.text" />
+            <Input class="w-10/12 rounded-r-none border-r-0" type="text" @click="keyUnitForm.edit('增益组', index, item)" :data-index="index" v-model="item.text" />
             <Button variant="outline" class="w-2/12 h-10 py-2 rounded-l-none" @click="keyUnitDelete.confirm('增益组', item)">删除</Button>
           </div>
         </template>
@@ -343,13 +343,26 @@
       </div>
 
       <div class="w-full flex flex-wrap items-center mb-1">
-        <p class="w-full text-[0.850rem] font-medium leading-none">
+        <p class="w-full text-[0.850rem] font-medium leading-none mt-2 mb-1">
           全屏组
         </p>
         <template v-for="(item, index) in roleConfig.attacks">
           <div class="w-full flex mt-1 items-center overflow-auto">
-            <Input class="w-10/12 rounded-r-none border-r-0" readonly type="text" @click="keyUnitForm.edit('全屏组', index, item)" :data-index="index" v-model="item.text" />
+            <Input class="w-10/12 rounded-r-none border-r-0" type="text" @click="keyUnitForm.edit('全屏组', index, item)" :data-index="index" v-model="item.text" />
             <Button variant="outline" class="w-2/12 h-10 py-2 rounded-l-none" @click="keyUnitDelete.confirm('全屏组', item)">删除</Button>
+          </div>
+        </template>
+        <Button variant="outline" class="w-full mt-1" @click="keyUnitForm.add('全屏组')">新增</Button>
+      </div>
+
+      <div class="w-full flex flex-wrap items-center mb-1">
+        <p class="w-full text-[0.850rem] font-medium leading-none mt-2 mb-1">
+          开关组
+        </p>
+        <template v-for="(item, index) in roleConfig.options">
+          <div class="w-full flex mt-1 items-center overflow-auto">
+            <Input class="w-10/12 rounded-r-none border-r-0" type="text" @click="keyUnitForm.edit('开关组', index, item)" :data-index="index" v-model="item.text" />
+            <Button variant="outline" class="w-2/12 h-10 py-2 rounded-l-none" @click="keyUnitDelete.confirm('开关组', item)">删除</Button>
           </div>
         </template>
         <Button variant="outline" class="w-full mt-1" @click="keyUnitForm.add('全屏组')">新增</Button>
@@ -456,7 +469,7 @@ import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVal
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {onMounted, onUnmounted, reactive, ref, watch} from "vue";
+import {reactive, ref} from "vue";
 import {RoleConfig} from "@/types/roleConfig.ts";
 import {Status} from "@/types/status.ts";
 import {Configs} from "@/types/configs.ts";
@@ -530,7 +543,7 @@ const keyUnitForm = reactive({
   },
   repeat: () => {
     let idx = keyUnitForm.groupNo - 1
-    let key: RoleConfigKey = keyUnitForm.name == '增益组' ? 'buffs':'attacks'
+    let key: RoleConfigKey = keyUnitForm.name == '增益组' ? 'buffs': (keyUnitForm.name == '攻击组' ? 'attacks' : 'options')
     for (let [index, item] of props.roleConfig[key].entries()) {
         if (index != idx && item.key == keyUnitForm.key) {
         return '按键重复'
@@ -545,7 +558,7 @@ const keyUnitForm = reactive({
 
 const keyUnitDelete = reactive({
   isOpen: false,
-  name: '增益组|全屏组',
+  name: '增益组|全屏组|开关组',
   text: '',
   key: '',
   second: '',
@@ -618,40 +631,6 @@ const copyText = (text: string) => {
   navigator.clipboard.writeText(text)
   emit('toast', '复制完成')
 }
-
-watch(() => props.currentStatus.isRunning, (isRunning) => {
-  toggleControlStatus(isRunning)
-});
-
-function toggleControlStatus(isRunning: boolean) {
-  if (!formRef.value) return
-  const controls = formRef.value.querySelectorAll('input,textarea,select,button');
-  controls.forEach((item) => {
-    const element = item as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLButtonElement;
-    element.disabled = isRunning
-    element.style.pointerEvents = isRunning ? 'none' : 'auto'
-  })
-}
-
-const handleFormClick = (event: MouseEvent) => {
-  const target = event.target as HTMLElement;
-  if (target.querySelectorAll('input,textarea,select,button').length > 0) {
-    if (props.currentStatus.isRunning) {
-      emit('toast', '停止任务后才能修改')
-    }
-  }
-};
-
-onMounted(() => {
-  toggleControlStatus(props.currentStatus.isRunning)
-  if (!formRef.value) return
-  formRef.value.addEventListener('click', handleFormClick);
-})
-
-onUnmounted(() => {
-  if (!formRef.value) return
-  formRef.value.removeEventListener('click', handleFormClick);
-})
 
 const emit = defineEmits(['sendMessage', 'toast'])
 </script>

@@ -1,33 +1,34 @@
 <template>
-  <div class="flex items-center flex-wrap rounded-md border p-4 mb-1">
-    <div class="flex w-full items-center space-x-4 h-11 border-b border-t pt-2 pb-1">
+  <div class="flex items-center flex-wrap rounded-md border px-4 py-1">
+    <div class="flex w-full items-center space-x-4 h-11 border-b py-2">
       <Bell/>
-      <div class="flex-1 space-y-1 ">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
+
         <p class="text-sm font-medium leading-none">
           微信通知
         </p>
-        <p class="text-sm text-muted-foreground">
-          全局微信通知开关
+        <p class="text-sm leading-none text-muted-foreground">
+          全局通知开关
         </p>
       </div>
       <Switch v-model:checked="configs.weChatNotice" @update:checked="changeConfig('weChatNotice', $event)"/>
     </div>
-    <div class="flex w-full items-center space-x-4 h-11 border-b border-t mt-1 pb-1">
+    <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 py-2">
       <BatteryLow/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           血量检测
         </p>
       </div>
       <Switch v-model:checked="configs.checkHp" @update:checked="changeConfig('checkHp', $event)"/>
     </div>
-    <div class="flex w-full items-center space-x-4 h-11 border-b border-t mt-1 pt-2 pb-1">
+    <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 py-2">
       <BatteryLow/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           魔量检测
         </p>
-        <p class="text-sm text-muted-foreground">
+        <p class="text-sm leading-none text-muted-foreground">
           白毛这里检测血量
         </p>
       </div>
@@ -36,7 +37,7 @@
 
     <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
       <TrainFront/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           小黑处理
         </p>
@@ -66,7 +67,7 @@
 
     <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
       <Target/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           蘑菇处理
         </p>
@@ -90,7 +91,7 @@
 
     <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
       <Accessibility/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           新测谎处理
         </p>
@@ -114,7 +115,7 @@
 
     <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
       <Shuffle/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           掉线处理
         </p>
@@ -138,7 +139,7 @@
 
     <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
       <LockKeyholeOpen/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           符文处理
         </p>
@@ -168,11 +169,11 @@
 
     <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
       <Skull/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           死亡处理
         </p>
-        <p class="text-sm text-muted-foreground">
+        <p class="text-sm leading-none text-muted-foreground">
           回图向导配置
         </p>
       </div>
@@ -201,11 +202,11 @@
 
     <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
       <Clock1/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           定时换线
         </p>
-        <p class="text-sm text-muted-foreground">
+        <p class="text-sm leading-none text-muted-foreground">
           分钟 0为不换
         </p>
       </div>
@@ -219,13 +220,13 @@
       </NumberField>
     </div>
 
-    <div class="flex w-full items-center space-x-4 h-11 border-b mt-1 pb-1">
+    <div class="flex w-full items-center space-x-4 h-11 mt-1 pb-1">
       <PersonStanding/>
-      <div class="flex-1 space-y-1">
+      <div class="flex-1 flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
         <p class="text-sm font-medium leading-none">
           来人换线
         </p>
-        <p class="text-sm text-muted-foreground">
+        <p class="text-sm leading-none text-muted-foreground">
           秒数 1秒换 0不换
         </p>
       </div>

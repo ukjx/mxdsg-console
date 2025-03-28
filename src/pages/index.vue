@@ -6,7 +6,8 @@
         <span>当前: {{currentName}}</span>
         <span>状态: {{runStatus}}</span>
         <span>运行: {{runTime}}</span>
-        <span v-if="status.lineNumber">频道: {{status.lineNumber}}线</span>
+        <span v-if="isRoleNameVisible">角色: {{configs.roleName}}</span>
+        <!--<span v-if="status.lineNumber">频道: {{status.lineNumber}}线</span>-->
       </CardDescription>
     </CardHeader>
     <CardContent class="grid gap-5">
@@ -211,7 +212,8 @@ let roleConfig: RoleConfig = reactive({
   amulet: '',
   dailyTask: '',
   buffs: [],
-  attacks: []
+  attacks: [],
+  options: []
 });
 
 let status: Status = reactive({
@@ -242,13 +244,18 @@ const showToast = (msg: string) => {
 }
 
 const currentName = computed(() => {
-  if (configs.taskName === 'execute')
+  if (configs.taskName == 'execute')
     return configs.scriptName.replace(/\.txt$/, '')
   else
     return taskNameData.get(configs.taskName)
 })
 const runStatus = computed(() => {
-  return status.isRunning?'运行中':'未运行'
+  return status.isRunning ? '运行中' : '未运行'
+})
+const isRoleNameVisible = computed(() => {
+  const validTaskNames = ['fixedPoint', 'range', 'daily', 'monsterPark'];
+  return configs.roleName && validTaskNames.includes(configs.taskName);
+
 })
 
 let runTime = ref('')
